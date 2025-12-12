@@ -1,0 +1,191 @@
+\section{Introductie}
+
+Retailbedrijven maken steeds vaker gebruik van IP-camera’s voor beveiliging, analyse van klantenstromen en operationeel beheer. 
+Ook in zetelwinkels is videobewaking ondertussen een essentieel onderdeel van de dagelijkse werking. 
+Deze camera’s worden doorgaans aangesloten op het interne netwerk van de winkel, 
+vaak zonder strikte segmentatie of geavanceerde beveiligingsinstellingen. 
+Hierdoor vormen ze een mogelijk toegangs- of escalatiepunt voor aanvallers \parencite{Naprys2024}.
+
+Het [IP-cameramodel van bedrijf X] wordt door de betrokken zetelwinkel ingezet als primair bewakingsmiddel. 
+Vaak blijkt dat configuratie en firmwarebeheer eerder beperkt zijn uitgevoerd bij bedrijven, 
+een situatie die in de literatuur vaak gelinkt wordt aan verhoogde veiligheidsrisico’s \parencite{AlfredCamera2022}. 
+De combinatie van retailnetwerken, beperkte IT-ondersteuning en wijdverspreide IoT-apparaten creëert een omgeving waarin zelfs kleine misconfiguraties aanzienlijke impact kunnen hebben.
+
+De centrale probleemstelling luidt dat de winkel een IP-camera gebruikt waarvan niet duidelijk is of deze veilig geconfigureerd is, 
+up-to-date is of correct gesegmenteerd is binnen het netwerk. Indien kwetsbaarheden aanwezig zijn, 
+kan dit leiden tot ongeautoriseerde toegang tot camerabeelden, manipulatie van instellingen of zelfs gebruik van de camera als toegangspunt voor bredere netwerktoegang.
+
+Deze bachelorproef richt zich op IT-professionals, netwerkbeheerders en security-consultants die in een retailcontext verantwoordelijk zijn voor het veilig inzetten van camerabewaking.
+
+\subsection*{Centrale onderzoeksvraag}
+
+Welke kwetsbaarheden vertoont het [IP-cameramodel van bedrijf X] binnen de retailomgeving van een zetelwinkel, 
+hoe kunnen deze in een gecontroleerde omgeving worden aangetoond, 
+en welke beveiligingsmaatregelen zijn nodig om misbruik te voorkomen?
+
+
+Vanuit deze centrale vraag worden volgende deelvragen onderzocht:
+\begin{itemize}
+    \item Welke bekende CVE’s en risico’s bestaan er voor vergelijkbare IP-camera’s?
+    \item Hoe communiceert het toestel binnen een retailnetwerk (open poorten, protocollen, standaardinstellingen)?
+    \item Kunnen bekende exploits of misconfiguraties effectief worden misbruikt in een gecontroleerde testomgeving?
+    \item Welke beveiligingsmaatregelen zijn noodzakelijk om de winkelomgeving beter te beschermen?
+\end{itemize}
+
+De doelstelling van dit onderzoek is het opleveren van een onderbouwd beveiligingsadviesrapport op basis van technische analyse, exploitatiepogingen en threat modeling. Daarnaast worden een reproduceerbare proof-of-concept-testomgeving en technische documentatie voorzien, zodat resultaten herhaalbaar zijn binnen dezelfde of gelijkaardige retailomgevingen.
+
+\section{State-of-the-art}
+
+De beveiliging van netwerkkamera’s blijft een actueel onderzoeksdomein, zeker binnen sectoren waarin deze apparaten intensief worden gebruikt, zoals retail. Onderzoeken tonen aan dat IP-camera’s vaak kwetsbaarheden bevatten door gebrekkige firmware, zwakke standaardconfiguratie en beperkte beveiligingsfunctionaliteit \parencite{Butun2019}. In een winkelomgeving, waar camera’s vaak zonder netwerksegmentatie worden geplaatst, vergroot dit risico aanzienlijk.
+
+Recente kwetsbaarheden tonen structurele problemen bij diverse camerafabrikanten. In de literatuur worden verschillende ernstige kwetsbaarheden beschreven, waaronder API-kwetsbaarheden zoals CVE-2024-13130, waarbij configuratiebestanden toegankelijk worden zonder geldige authenticatie. Andere kwetsbaarheden, zoals CVE-2021-33045, tonen aan dat brute-force-aanvallen mogelijk blijven wanneer rate limiting en account lockout ontbreken.
+
+Daarnaast wijzen verschillende bronnen erop dat gebruikers zelden standaardwachtwoorden wijzigen of firmware-updates toepassen \parencite{AlfredCamera2022}. In een retailcontext, waar dagelijkse operationele druk hoog is en IT-ondersteuning vaak beperkt, wordt deze problematiek nog versterkt. Camera’s worden in de praktijk vaak rechtstreeks op het productienetwerk aangesloten, samen met kassasystemen, kantoorpc’s en andere kritieke systemen.
+
+Onderzoek naar IoT-beveiliging toont aan dat apparaten zoals IP-camera’s vaak minimale beveiliging implementeren, beperkte rekenkracht hebben en afhankelijk zijn van correcte configuratie door de eindgebruiker \parencite{Butun2019}. Hierdoor zijn zij gevoelig voor aanvallen zoals:
+\begin{itemize}
+    \item credential stuffing en brute force op inloginterfaces;
+    \item sniffing van ongeëncrypteerde videostreams (bijvoorbeeld RTSP zonder TLS);
+    \item misbruik van debuginterfaces of verborgen API-endpoints;
+    \item firmware-manipulatie of analyse op zoek naar backdoors.
+\end{itemize}
+
+Binnen de literatuur ligt de focus vaak op brede productlijnen of meerdere merken tegelijk. Er is echter een duidelijke tekort in onderzoek dat zich specifiek richt op één camera gebruikt in een reële retailomgeving, met een concrete casus en aanbevelingen op maat van die omgeving. Deze bachelorproef probeert dat gat te vullen door het [IP-cameramodel van bedrijf X] centraal te stellen in een zetelwinkelcontext.
+
+\section{Methodologie}
+
+Het onderzoek wordt uitgevoerd in vijf iteratieve sprints van telkens tien dagen. Elke sprint levert concrete deliverables op die als input dienen voor de volgende fases. De aanpak is daardoor adaptief en laat toe om tussentijdse inzichten snel te verwerken.
+
+\subsection*{Sprint 1: literatuurstudie en CVE-inventaris}
+
+In de eerste sprint wordt een gestructureerd overzicht opgebouwd van alle publiek gedocumenteerde kwetsbaarheden die relevant zijn voor het type IP-camera dat in de zetelwinkel wordt gebruikt, aangevuld met informatie over vergelijkbare modellen. Hiervoor worden onder meer de NVD-database, vakartikels en securityblogs geraadpleegd. Elke vondst krijgt een plek in een tabel met onder andere:
+\begin{itemize}
+    \item CVE-identificatie;
+    \item CVSS-score;
+    \item type aanval (bijv. authenticatie-omzeiling, remote code execution, informatielek);
+    \item vereiste toegangsrechten;
+    \item potentiële impact in een retailomgeving.
+\end{itemize}
+
+De sprint wordt afgerond met een risico-matrix die per kwetsbaarheid de impact en de exploitatiemoeilijkheid weergeeft, toegespitst op de winkelcontext.
+
+\subsection*{Sprint 2: analyse winkelomgeving en opzetten testlab}
+
+Parallel aan de literatuurstudie wordt de huidige situatie in de zetelwinkel in kaart gebracht:
+\begin{itemize}
+    \item netwerktopologie: plaats van de camera ten opzichte van andere systemen (kassa’s, kantoor, guest Wi-Fi);
+    \item gebruikte protocollen: HTTP/HTTPS, RTSP, ONVIF, eventuele cloudkoppelingen;
+    \item huidige configuratie: gebruikersaccounts, wachtwoordenbeleid, firmwareversie, loginstellingen.
+\end{itemize}
+
+Op basis hiervan wordt een gecontroleerde testomgeving opgezet die de winkelconfiguratie zo goed mogelijk benadert, maar volledig afgescheiden is van het productienetwerk. Deze labomgeving bevat onder andere:
+\begin{itemize}
+    \item een fysiek exemplaar van het [IP-cameramodel van bedrijf X];
+    \item een virtuele Kali Linux-aanvalsmachine;
+    \item een management-VM voor configuratie en logging;
+    \item netwerkmonitoring met Wireshark;
+    \item documentatie van VLAN’s en firewallregels die de winkelsetup simuleren.
+\end{itemize}
+
+De deliverable van deze sprint is een gedetailleerd netwerkschema van zowel de reële winkelomgeving als de testlabconfiguratie, inclusief motivering van eventuele vereenvoudigingen.
+
+\subsection*{Sprint 3: proof-of-conceptexploitatie en logging}
+
+In de derde sprint worden de belangrijkste kwetsbaarheden uit de CVE-inventaris en de geobserveerde configuratie getest in de labomgeving. De nadruk ligt op aanvallen die in de praktijk relevant zijn voor retail, zoals:
+\begin{itemize}
+    \item brute-force- of credential-stuffingaanvallen op de webinterface van de camera;
+    \item misbruik van onbeschermde of zwak beschermde API-endpoints;
+    \item sniffing van videostreams op zoek naar ongeëncrypteerde data;
+    \item misbruik van te ruime netwerktoegang (bijvoorbeeld toegang vanaf guest-netwerk).
+\end{itemize}
+
+Elke test wordt uitgebreid gelogd:
+\begin{itemize}
+    \item PCAP-bestanden van het netwerkverkeer;
+    \item consolelogs van tools (Nmap, hydra, eigen scripts, \dots);
+    \item screenshots van geslaagde en mislukte aanvallen;
+    \item eventuele wijzigingen in de configuratie of firmware.
+\end{itemize}
+
+De sprint resulteert in een dataset van proof-of-concept-scripts, configuratiebestanden en logbestanden die later gebruikt worden voor analyse en rapportage.
+
+\subsection*{Sprint 4: threat modeling (STRIDE) en mitigatieontwerp}
+
+Op basis van de bevindingen uit sprint 1–3 wordt een STRIDE-analyse uitgevoerd. Voor elke vastgestelde kwetsbaarheid of misconfiguratie wordt nagegaan welke bedreigingen aanwezig zijn op het vlak van:
+\begin{itemize}
+    \item Spoofing;
+    \item Tampering;
+    \item Repudiation;
+    \item Information Disclosure;
+    \item Denial of Service;
+    \item Elevation of Privilege.
+\end{itemize}
+
+Bij iedere bedreiging hoort een set van concrete mitigaties, specifiek afgestemd op de zetelwinkel. Mogelijke aanbevelingen zijn:
+\begin{itemize}
+    \item segmentatie van cameraverkeer in een apart management-VLAN;
+    \item afdwingen van sterke wachtwoorden en het uitschakelen van standaardaccounts;
+    \item beperken van externe toegang via firewallregels;
+    \item opzetten van een procedure voor tijdige firmware-updates;
+    \item waar mogelijk inschakelen van versleutelde streams en beheerinterfaces (bijv. HTTPS, TLS).
+\end{itemize}
+
+De output van deze sprint is een STRIDE-matrix en een conceptversie van het beveiligingsadvies.
+
+\subsection*{Sprint 5: eindrapport en presentatie}
+
+In de laatste sprint worden alle resultaten samengebracht in een eindrapport voor bedrijf~X. Dit rapport bevat:
+\begin{itemize}
+    \item een samenvatting van de context en onderzoeksvragen;
+    \item een overzicht van de relevante kwetsbaarheden en testresultaten;
+    \item de STRIDE-analyse en prioriteitenlijst van risico’s;
+    \item een praktisch stappenplan met aanbevolen maatregelen.
+\end{itemize}
+
+Daarnaast wordt een presentatie uitgewerkt waarin de belangrijkste bevindingen en aanbevelingen in begrijpelijke, maar technisch onderbouwde taal worden toegelicht. De technische artefacten (scripts, configuraties, PCAP’s) worden in een versiebeheersysteem opgenomen zodat verdere opvolging mogelijk is.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.55\textwidth]{planning.png}
+    \caption{Planning van het onderzoek met de vijf sprints en milestones.}
+    \label{fig:planning-onderzoek}
+\end{figure}
+
+\section{Verwachte resultaten en conclusie}
+
+Op basis van de literatuur en praktijkervaring verwachten we aan te tonen dat het [IP-cameramodel van bedrijf X] minstens één of meerdere kwetsbaarheden of misconfiguraties vertoont die relevant zijn voor een retailomgeving. Dit kunnen onder andere zijn:
+\begin{itemize}
+    \item zwakke of ongewijzigde standaardcredentials;
+    \item ongefilterde netwerkpoorten die van buiten het camerasegment bereikbaar zijn;
+    \item onversleutelde videostreams of beheerinterfaces;
+    \item onvoldoende logging en monitoring van beheeracties.
+\end{itemize}
+
+De proof-of-concepttesten zullen naar verwachting aantonen dat sommige van deze kwetsbaarheden in de labomgeving misbruikt kunnen worden zonder dat dit onmiddellijk merkbaar is voor winkelpersoneel. De mate waarin deze aanvallen ook in de echte winkelomgeving mogelijk zijn, zal afhangen van de effectieve segmentatie en firewallconfiguratie.
+
+Wat de visualisatie betreft, wordt voorzien om resultaten onder meer als volgt voor te stellen:
+\begin{itemize}
+    \item een vergelijking van de beveiligingsstatus vóór en na implementatie van de voorgestelde maatregelen.
+\end{itemize}
+
+De meerwaarde voor de zetelwinkel en soortgelijke retailers ligt in:
+\begin{itemize}
+    \item een concreet kwetsbaarhedenrapport op maat van hun omgeving;
+    \item duidelijke, haalbare aanbevelingen om de camerabeveiliging te verbeteren;
+    \item een reproduceerbaar testscenario dat later opnieuw kan worden gebruikt bij configuratiewijzigingen of vervanging van hardware.
+\end{itemize}
+\begin{table}[h!]
+\centering
+\caption{Verwachte meetgegevens}
+\label{tab:meetgegevens}
+\begin{tabular}{|l|l|p{3cm}|}
+\hline
+\textbf{Parameters} & \textbf{Eenheid} & \textbf{Toelichting} \\ \hline
+Aantal succesvolle logins & Aantal & Via standaardaanvallen of brute-force-aanvallen \\ \hline
+CVE’s toepasbaar op toestel & Aantal & Met bewijs van de impact die deze kwetsbaarheden kunnen hebben \\ \hline
+Poorten die extern zichtbaar zijn & Aantal & Gedetecteerd via Nmap-scans \\ \hline
+Reactietijd op een loginpoging & Milliseconden & Meetbaarheid van brute-force-detectie of loginvertraging \\ \hline
+\end{tabular}
+\end{table}
+
+Deze bachelorproef levert dus niet alleen academische inzichten op, maar ook direct toepasbare output voor de praktijk. Indien bepaalde kwetsbaarheden al door recente firmware-updates opgelost blijken te zijn, is dat eveneens een relevante conclusie: het toont aan dat proactief patchbeheer ook in retailomgevingen een doorslaggevende rol speelt in de beveiliging van IoT-apparaten zoals IP-camera’s.

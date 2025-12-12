@@ -1,0 +1,57 @@
+%==============================================================================
+% Onderzoeksvoorstel bachelorproef - hoofdfile
+%==============================================================================
+
+\documentclass{hogent-article}
+
+% Bibliografie (BibLaTeX)
+\addbibresource{voorstel.bib}
+
+% Opleiding, vak, type opdracht
+\studyprogramme{Professionele bachelor toegepaste informatica}
+\course{Bachelorproef}
+\assignmenttype{Onderzoeksvoorstel}
+
+\academicyear{2025-2026}
+
+% Titel, auteur, mail
+\title{Kwetsbaarheden in het [IP-cameramodel van bedrijf X]: analyse en proof-of-concept in een retailomgeving}
+
+\author{Emiel Smith}
+\email{emiel.smith@student.hogent.be}
+
+% Co-promotor (pas aan of laat voorlopig weg)
+% \supervisor[Co-promotor]{Naam Co-promotor (Bedrijf, \href{mailto:naam@bedrijf.be}{naam@bedrijf.be})}
+
+% Specialisatierichting en sleutelwoorden
+\specialisation{System \& Network Administrator}
+\keywords{Cybersecurity, IP-camera's, Retail, CVE-analyse, Threat modeling}
+
+% Extra packages die je nodig hebt
+\usepackage{graphicx}
+\usepackage{setspace}
+\onehalfspacing
+
+\begin{document}
+
+\begin{abstract}
+In veel retailomgevingen, waaronder meubel- en zetelwinkels, worden IP-camera’s ingezet voor diefstalpreventie, 
+operationeel inzicht en veiligheid. Toch tonen recente rapporten aan dat netwerkcamera’s vaak onveilig geconfigureerd zijn en daardoor kwetsbaar zijn voor cyberaanvallen. 
+In deze bachelorproef wordt onderzocht hoe een [IP-cameramodel van bedrijf X] zich gedraagt binnen het interne netwerk van een zetelwinkel, 
+welke kwetsbaarheden aanwezig zijn en hoe deze misbruikt kunnen worden binnen een gecontroleerde testopstelling. 
+Het onderzoek vertrekt vanuit gekende CVE’s, een uitgebreide literatuurstudie en een technische analyse van netwerkverkeer en configuratie. 
+Via proof-of-concepttesten worden potentiële aanvalsscenario’s nagebootst, waarna beveiligingsmaatregelen worden geformuleerd. 
+Het eindresultaat bestaat uit een praktisch toepasbaar beveiligingsadvies voor de winkel, 
+een kwetsbaarhedenrapport en een reproduceerbare testomgeving. Dit biedt winkelketens, 
+IT-beheerders en security-professionals inzicht in risico’s en aanbevelingen om hun cameranetwerk robuuster te beveiligen.
+\end{abstract}
+
+\tableofcontents
+
+% De eigenlijke tekst van het voorstel
+\input{voorstel-inhoud}
+
+\nocite{*}
+\printbibliography[heading=bibintoc]
+
+\end{document}
