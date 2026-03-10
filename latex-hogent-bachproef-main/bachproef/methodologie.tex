@@ -1,0 +1,53 @@
+%%=============================================================================
+%% Methodologie
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Methodologie}{Methodology}}%
+\label{ch:methodologie}
+
+Dit hoofdstuk beschrijft het plan van aanpak waarmee de onderzoeksvraag uit Hoofdstuk~\ref{ch:inleiding} wordt beantwoord. De literatuurstudie (Hoofdstuk~\ref{ch:stand-van-zaken}) levert hierbij het theoretisch kader en de risicocategorieën; in dit hoofdstuk wordt toegelicht hoe deze inzichten worden vertaald naar een reproduceerbare analyse, gecontroleerde validatie en onderbouwde aanbevelingen. De uitvoering is georganiseerd in vijf sprints, met per sprint een duidelijke doelstelling en concrete deliverables.
+
+\section{\IfLanguageName{dutch}{Sprint 1: Contextanalyse en literatuurverankering}{Sprint 1: Context analysis and literature grounding}}%
+\label{sec:meth-sprint1}
+
+In Sprint~1 wordt een reproduceerbare basis opgebouwd door (1) de IP-camerainfrastructuur van meubelzaak De Rore in kaart te brengen en (2) de beveiligingsvereisten en risicocategorieën te verankeren in erkende richtlijnen en relevante literatuur. De focus ligt op het begrijpen van de operationele en technische context, niet op het verzamelen van individuele CVE’s als einddoel.
+
+Concreet wordt een asset- en configuratie-inventaris opgesteld (camera’s, NVR/VMS, netwerkcomponenten), aangevuld met een netwerk- en datastroomoverzicht (o.a.\ beheerinterfaces, video-streaming, ONVIF/RTSP/HTTP(S), externe toegang). Daarbij worden trust boundaries en beheerprocessen (firmware/updateproces, accountbeheer, wachtwoordbeleid) beschreven. Dit resulteert in een eerste identificatie van beveiligingskritische componenten. Standaarden en bronnen worden gebruikt om interoperabiliteits- en protocolaspecten correct te kaderen \autocite{ONVIFCoreSpec2025}.
+
+Parallel wordt een gerichte literatuurstudie uitgevoerd rond IP-camera- en IoT-beveiliging in KMO-/retailcontext, met nadruk op terugkerende probleemcategorieën zoals zwakke authenticatie, misconfiguraties, firmwarebeheer, exposure naar internet en netwerksegmentatie \autocite{Butun2019arXivIoTSecurity,ENISA2024ThreatLandscape}. CVE’s en publieke kwetsbaarheidsdatabanken worden gebruikt als illustratief bewijs van deze categorieën, niet als primaire onderzoeksdoelstelling \autocite{NVD2025}.
+
+\textbf{Deliverables Sprint~1:} (a) asset inventory, (b) topologie + dataflow diagram, (c) overzicht van risicocategorieën gekoppeld aan literatuur en richtlijnen, (d) eerste longlist van relevante risico’s voor De Rore.
+
+\section{\IfLanguageName{dutch}{Sprint 2: Analyse, prioritering en afbakening}{Sprint 2: Analysis, prioritization and scoping}}%
+\label{sec:meth-sprint2}
+
+In Sprint~2 worden de risico’s uit Sprint~1 geprioriteerd en vertaald naar een afgebakende scope voor gecontroleerde validatie. Prioritering gebeurt op basis van expliciete criteria: verwachte impact (privacy/operationeel), waarschijnlijkheid (exposure, misconfiguraties, gebrek aan segmentatie), en reproduceerbaarheid/veiligheid in een labomgeving.
+
+Op basis hiervan wordt een beperkt aantal testhypotheses en aanvalspaden vastgelegd (bv.\ misbruik van beheerinterfaces, ongeëncrypteerde videostreams, te brede netwerktoegang, zwakke authenticatie). Deze sprint levert een testplan op met duidelijke randvoorwaarden (wat wél/niet getest wordt, en waarom). Bij het onderbouwen van exposure-risico’s wordt rekening gehouden met het feit dat internet-wide scanning kwetsbare diensten snel identificeerbaar maakt wanneer ze extern zichtbaar zijn \autocite{durumeric2014internet}.
+
+\textbf{Deliverables Sprint~2:} (a) scope statement, (b) risico-prioriteitenmatrix, (c) testplan met hypotheses en acceptatiecriteria.
+
+\section{\IfLanguageName{dutch}{Sprint 3: Gecontroleerde validatie in labomgeving en logging}{Sprint 3: Controlled validation in a lab environment and logging}}%
+\label{sec:meth-sprint3}
+
+In Sprint~3 worden de geselecteerde aanvalspaden uitsluitend in een gecontroleerde labomgeving gevalideerd (digitale twin of representatieve opstelling), zodat kwetsbaarheden veilig en reproduceerbaar kunnen worden aangetoond zonder risico voor de productieomgeving. De tests richten zich op realistische scenario’s zoals credential guessing op beheerinterfaces (binnen afgesproken limieten), misbruik van zwakke API-endpoints, analyse van videostreams op encryptie, en verificatie van laterale beweging bij onvoldoende segmentatie.
+
+Elke test wordt systematisch gelogd (PCAP, tool output, configuraties, screenshots) en waar mogelijk aangevuld met device/VMS logs om detecteerbaarheid en monitoring-aspecten mee te nemen. Deze logging ondersteunt reproduceerbaarheid en traceerbaarheid van bevindingen richting mitigaties.
+
+\textbf{Deliverables Sprint~3:} (a) reproduceerbare testcases/PoC’s, (b) logdataset, (c) samenvatting van bevindingen per risico/hypothese.
+
+\section{\IfLanguageName{dutch}{Sprint 4: Threat modeling (STRIDE) en mitigatieontwerp}{Sprint 4: Threat modeling (STRIDE) and mitigation design}}%
+\label{sec:meth-sprint4}
+
+In Sprint~4 worden de bevindingen vertaald naar een formele threat model-analyse met STRIDE. STRIDE biedt een hanteerbaar kader om dreigingen systematisch te classificeren (spoofing, tampering, repudiation, information disclosure, denial of service en elevation of privilege) \autocite{Microsoft2022bSTRIDE}. De dataflow diagrams en testresultaten vormen input om dreigingen per component en trust boundary te benoemen, inclusief misbruikscenario’s en mogelijke detectiepunten.
+
+Daarna worden mitigaties ontworpen die expliciet gekoppeld zijn aan (1) vastgestelde risico’s, (2) de operationele context van De Rore, en (3) erkende controls/richtlijnen. Hiervoor wordt NIST SP~800-53 gebruikt als referentiekader voor relevante controles (o.a.\ toegangscontrole, configuratiebeheer, logging/monitoring en segmentatie) \autocite{NISTSP80053r5}. Voor device-gerichte minimale capabilities wordt de IoT core baseline (NISTIR~8259A) gebruikt \autocite{fagan2020iot}. Waar relevant worden ook aanbevelingen uit het actuele dreigingslandschap meegenomen \autocite{ENISA2024ThreatLandscape}. Het resultaat is een geprioriteerd mitigatieplan met quick wins en structurele verbeteringen.
+
+\textbf{Deliverables Sprint~4:} (a) STRIDE threat model, (b) mitigatiematrix (risico $\rightarrow$ maatregel $\rightarrow$ haalbaarheid $\rightarrow$ prioriteit), (c) adviesrapport.
+
+\section{\IfLanguageName{dutch}{Sprint 5: Eindrapport en presentatie}{Sprint 5: Final report and presentation}}%
+\label{sec:meth-sprint5}
+
+In Sprint~5 worden context, methode, resultaten en aanbevelingen samengebracht in een eindrapport dat traceerbaar is: elke aanbeveling verwijst naar een vastgesteld risico en de onderliggende observaties/testresultaten. Daarnaast wordt een stakeholdergerichte presentatie opgesteld met focus op impact, prioriteiten en praktische uitvoerbaarheid.
+
+\textbf{Deliverables Sprint~5:} (a) eindrapport, (b) presentatie, (c) bijlagen met artefacten (topologie, testplan, logs/PoC’s waar toegestaan).

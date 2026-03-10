@@ -1,0 +1,58 @@
+%%=============================================================================
+%% Inleiding
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Inleiding}{Introduction}}%
+\label{ch:inleiding}
+
+Retailbedrijven maken steeds vaker gebruik van IP-camerasystemen voor diefstalpreventie, operationeel beheer en veiligheidsdoeleinden. Ook binnen meubel- en zetelwinkels vormt camerabewaking een vast onderdeel van de dagelijkse werking. In de praktijk worden deze systemen vaak geïntegreerd in het bestaande interne netwerk van de winkel, terwijl netwerksegmentatie en beveiligingsinstellingen beperkt of afwezig zijn. Daardoor kunnen IP-camera’s, naast hun functionele rol, ook een onbedoeld toegangspunt vormen voor cyberaanvallen en laterale beweging binnen het netwerk \parencite{ENISA2024ThreatLandscape,Naprys2024Dahua}.
+
+Deze bachelorproef vertrekt vanuit een concrete casus: de IP-camerainfrastructuur van meubelzaak De Rore (Deinze). Binnen deze retailomgeving wordt gebruikgemaakt van meerdere types IP-camera’s. Dergelijke heterogene camerainfrastructuren verhogen de complexiteit van configuratie en beheer, wat volgens de literatuur kan leiden tot bijkomende beveiligingsrisico’s wanneer firmwarebeheer, toegangscontrole en netwerkarchitectuur onvoldoende op elkaar zijn afgestemd \parencite{Butun2019arXivIoTSecurity}.
+
+\section{\IfLanguageName{dutch}{Probleemstelling}{Problem Statement}}%
+\label{sec:probleemstelling}
+
+De centrale probleemstelling is dat binnen de onderzochte winkelomgeving onvoldoende zicht bestaat op de beveiligingsstatus van het IP-camerasysteem. Het is onduidelijk in welke mate de gebruikte camera’s correct geconfigureerd zijn, actueel gepatcht zijn en veilig geïntegreerd zijn binnen het interne netwerk. Eventuele kwetsbaarheden kunnen leiden tot ongeautoriseerde toegang tot camerabeelden, manipulatie van instellingen of misbruik van de camerainfrastructuur als opstap naar andere netwerksystemen \parencite{Butun2019arXivIoTSecurity}.
+
+Deze bachelorproef heeft een meerwaarde voor een duidelijk afgebakende doelgroep: de IT-verantwoordelijken en netwerkbeheerders van meubelzaak De Rore die instaan voor het beheer van de lokale netwerk- en camerainfrastructuur. Bij uitbreiding zijn de bevindingen en aanbevelingen relevant voor IT-verantwoordelijken en netwerkbeheerders in vergelijkbare retail- en KMO-omgevingen met gelijkaardige (heterogene) IP-camerasystemen.
+
+\section{\IfLanguageName{dutch}{Onderzoeksvraag}{Research question}}%
+\label{sec:onderzoeksvraag}
+
+De onderzoeksvraag van deze bachelorproef luidt als volgt:
+
+\begin{quote}
+    In welke mate is de bestaande IP-camerainfrastructuur binnen meubelzaak De Rore veilig geconfigureerd en geïntegreerd in het interne netwerk, en welke concrete maatregelen zijn nodig om het risico op misbruik en laterale netwerktoegang te verlagen?
+\end{quote}
+
+Om deze onderzoeksvraag te beantwoorden, worden volgende deelvragen onderzocht:
+
+\begin{itemize}
+    \item Welke beveiligingsrisico’s en aanvalspaden zijn relevant voor IP-camera’s die geïntegreerd zijn in een intern retailnetwerk \parencite{ENISA2024ThreatLandscape}?
+    \item Welke kwetsbaarheden en misconfiguraties zijn aanwezig in de huidige cameraconfiguratie (o.a.\ authenticatie, firmware, netwerkdiensten en beheerinterfaces) \parencite{Butun2019arXivIoTSecurity}?
+    \item In welke mate ondersteunt de huidige netwerkarchitectuur (segmentatie, toegangscontrole, monitoring) het beperken van laterale beweging vanuit de camerazone naar andere systemen \parencite{Naprys2024Dahua}?
+    \item Welke pragmatische verbetermaatregelen (configuratie, patchbeleid, segmentatie en monitoring) zijn haalbaar binnen de context van de winkel en leveren de grootste risicoreductie?
+\end{itemize}
+
+\section{\IfLanguageName{dutch}{Onderzoeksdoelstelling}{Research objective}}%
+\label{sec:onderzoeksdoelstelling}
+
+Het beoogde resultaat van deze bachelorproef is een onderbouwde beveiligingsevaluatie van de IP-camerainfrastructuur in de casusomgeving, aangevuld met een set concrete, prioriteerbare aanbevelingen om de beveiliging te verbeteren.
+
+De bachelorproef wordt als succesvol beschouwd wanneer:
+\begin{itemize}
+    \item de huidige configuratie- en integratiestatus van de IP-camera’s systematisch in kaart is gebracht (inventaris, configuratieparameters, netwerkpositie en firmwarestatus);
+    \item de belangrijkste risico’s en waarschijnlijke aanvalspaden zijn geïdentificeerd en gemotiveerd op basis van relevante literatuur;
+    \item er een praktisch toepasbaar verbeterplan is opgesteld (quick wins en structurele maatregelen) dat de kans op ongeautoriseerde toegang en laterale netwerktoegang aantoonbaar reduceert.
+\end{itemize}
+
+\section{\IfLanguageName{dutch}{Opzet van deze bachelorproef}{Structure of this bachelor thesis}}%
+\label{sec:opzet-bachelorproef}
+
+De rest van deze bachelorproef is als volgt opgebouwd:
+
+In Hoofdstuk~\ref{ch:stand-van-zaken} wordt een overzicht gegeven van de stand van zaken binnen het onderzoeksdomein, op basis van een literatuurstudie.
+
+In Hoofdstuk~\ref{ch:methodologie} wordt de methodologie toegelicht en worden de gebruikte onderzoekstechnieken besproken om een antwoord te kunnen formuleren op de onderzoeksvragen.
+
+In Hoofdstuk~\ref{ch:conclusie}, tenslotte, wordt de conclusie gegeven en een antwoord geformuleerd op de onderzoeksvragen. Daarbij wordt ook een aanzet gegeven voor toekomstig onderzoek binnen dit domein.
