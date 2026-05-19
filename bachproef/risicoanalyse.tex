@@ -1,0 +1,201 @@
+% !TeX root = SmithEmielBP.tex
+%%=============================================================================
+%% Risicoanalyse, prioritering en afbakening
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Risicoanalyse, prioritering en afbakening}{Risk analysis, prioritisation and scoping}}%
+\label{ch:risicoanalyse}
+
+Hoofdstuk~\ref{ch:contextanalyse} bracht de concrete beginsituatie van de camerainfrastructuur bij De Rore in kaart. Daaruit bleek dat de omgeving bestaat uit een centrale NVR, meerdere IP-camera's, een router/default gateway op \texttt{10.0.0.150}, bijkomende netwerkcomponenten, een beheerhost en beheer via TruVision Navigator. De NVR bevindt zich op \texttt{10.0.0.60}, terwijl de individuele camera's in de \texttt{192.168.0.x}-range geadresseerd zijn. Daarnaast werden beheerpraktijken vastgesteld zoals het gebruik van één gedeeld adminaccount, beperkte functiescheiding, onduidelijk lifecyclebeheer en beperkte opvolging van logging.
+
+Dit hoofdstuk vertaalt die contextanalyse naar een afgebakende risicoanalyse. Het doel is niet om alle mogelijke beveiligingsrisico's van IP-camera's exhaustief te behandelen, maar om de vaststellingen uit de casus te prioriteren en om te bepalen welke risico's in Hoofdstuk~\ref{ch:validatie} veilig en reproduceerbaar gevalideerd worden. Daarmee vormt dit hoofdstuk de brug tussen de beschrijvende inventarisatie uit Hoofdstuk~\ref{ch:contextanalyse} en de empirische validatie in de volgende fase.
+
+\section{\IfLanguageName{dutch}{Doel van de prioriteringsfase}{Purpose of the prioritisation phase}}%
+\label{sec:risico-doel}
+
+De prioriteringsfase heeft als doel om de brede risico-longlist uit de contextanalyse om te zetten naar een beperkt aantal onderzoekbare risicothema's. Niet elk aandachtspunt uit Hoofdstuk~\ref{ch:contextanalyse} is even belangrijk voor de onderzoeksvraag, en niet elk risico kan op een veilige manier technisch gevalideerd worden binnen de scope van deze bachelorproef. Daarom wordt in dit hoofdstuk expliciet bepaald welke risico's voldoende relevant, waarschijnlijk en reproduceerbaar zijn om mee te nemen naar de gecontroleerde validatie.
+
+Deze afbakening is belangrijk om drie redenen. Ten eerste moet de risicoanalyse aansluiten bij de centrale onderzoeksvraag, die focust op veilige configuratie, netwerkintegratie, misbruikrisico's en laterale netwerktoegang. Ten tweede moet de validatie proportioneel blijven ten opzichte van de operationele context van De Rore: de productieomgeving mag niet verstoord worden en er worden geen destructieve of onbeperkte aanvalstechnieken toegepast. Ten derde moet de selectie van hypothesen transparant zijn, zodat duidelijk is waarom bepaalde risico's wel en andere risico's niet verder onderzocht worden.
+
+De prioritering in dit hoofdstuk heeft daardoor een methodologische functie. Zij maakt zichtbaar hoe de ruwe vaststellingen uit de contextanalyse worden omgezet naar vijf concrete hypothesen. Die hypothesen worden vervolgens in Hoofdstuk~\ref{ch:validatie} gebruikt als leidraad voor de gecontroleerde validatie.
+
+\section{\IfLanguageName{dutch}{Prioriteringscriteria}{Prioritisation criteria}}%
+\label{sec:prioriteringscriteria}
+
+De risico's worden beoordeeld aan de hand van drie criteria: verwachte impact, waarschijnlijkheid binnen de actuele context en veilige reproduceerbaarheid. Deze criteria sluiten aan bij de sprintaanpak uit Hoofdstuk~\ref{ch:methodologie}, waarin sprint 2 expliciet wordt gebruikt om risico's te analyseren, te prioriteren en af te bakenen voor latere validatie.
+
+\begin{table}[H]
+    \centering
+    \small
+    \caption[Prioriteringscriteria voor de risicoanalyse]{Prioriteringscriteria voor de selectie van risico's en hypothesen.}
+    \label{tab:prioriteringscriteria}
+    {\setlength{\tabcolsep}{4pt}
+        \begin{tabular}{p{0.23\textwidth}p{0.35\textwidth}p{0.30\textwidth}}
+            \hline
+            \textbf{Criterium} & \textbf{Betekenis binnen dit onderzoek} & \textbf{Voorbeelden in de casus} \\
+            \hline
+            Verwachte impact &
+            De mogelijke gevolgen voor vertrouwelijkheid, integriteit, beschikbaarheid en netwerkveiligheid. Hierbij wordt niet alleen gekeken naar toegang tot camerabeelden, maar ook naar configuratiewijzigingen, operationele verstoring en laterale beweging. &
+            Ongeautoriseerde toegang tot livebeelden, wijziging van NVR-instellingen, verstoring van opnamefunctionaliteit of gebruik van een cameracomponent als opstap naar andere systemen. \\
+            \hline
+            Waarschijnlijkheid &
+            De mate waarin een risico zich plausibel kan voordoen binnen de vastgestelde configuratie en beheercontext. Dit wordt afgeleid uit concrete observaties zoals gedeelde accounts, zwakke wachtwoordpraktijken, zichtbare beheerinterfaces en beperkte logging. &
+            Eén gedeeld adminaccount, beheerinterfaces op interne netwerkcomponenten, historische remote-accessverwijzingen en onvoldoende zicht op patch- of updatebeheer. \\
+            \hline
+            Veilige reproduceerbaarheid &
+            De mate waarin een risico gecontroleerd, ethisch en zonder verstoring van de productieomgeving kan worden onderzocht. Risico's die enkel via destructieve of onbeperkte aanvalstechnieken onderzocht kunnen worden, worden niet meegenomen naar sprint 3. &
+            Beperkte connectiviteitstesten, browserobservaties, traceroutes, passieve netwerkcaptatie en loggingcontrole. Onbeperkte brute-force, destructieve tests en productieverstorende handelingen vallen buiten scope. \\
+            \hline
+        \end{tabular}
+    }
+\end{table}
+
+Een risico krijgt hoge prioriteit wanneer het op alle drie de criteria sterk scoort: het heeft een duidelijke impact, is plausibel binnen de huidige omgeving en kan gecontroleerd gevalideerd worden. Een risico krijgt middelmatige prioriteit wanneer het relevant is, maar eerder ondersteunend of minder rechtstreeks testbaar is. Een risico krijgt lagere prioriteit wanneer het vooral documentair of inventariserend van aard is en minder rechtstreeks bijdraagt aan de beantwoording van de onderzoeksvraag.
+
+\section{\IfLanguageName{dutch}{Van risico-longlist naar prioritaire risicothema's}{From risk longlist to priority risk themes}}%
+\label{sec:risico-longlist}
+
+
+
+De contextanalyse leverde meerdere beveiligingsrelevante observaties op. De belangrijkste risico's vloeien niet voort uit één geïsoleerde kwetsbaarheid, maar uit de combinatie van technische configuratie, netwerkarchitectuur en beheerpraktijken. De omgeving bevat onder meer een gedeeld adminaccount, beperkte functiescheiding, onduidelijk patchbeheer, actieve beheer- en protocolpaden, historische remote-accessverwijzingen en beperkte detectiecapaciteit. Daarnaast is de netwerktopologie niet volledig vlak, maar ook nog niet volledig transparant of aantoonbaar fijnmazig afgeschermd.
+
+Voor de risicoanalyse worden deze observaties gegroepeerd in vijf prioritaire risicothema's. Tabel~\ref{tab:prioritaire-risicothemas} vat de vertaling samen van contextobservaties naar prioriteit en validatiefocus.
+
+
+Uit deze vertaling blijkt dat vooral authenticatie, netwerkafscherming, beheer- en protocolblootstelling, remote access en logging relevant zijn voor de verdere validatie. Andere observaties blijven nuttig voor het dossier, maar worden niet als primaire testdoelen geselecteerd. Voorbeelden daarvan zijn de exacte fysieke positionering van elke camera, MAC-adressen per toestel of een volledig uitgewerkte firmware-inventaris van elk individueel cameramodel. Deze informatie kan belangrijk zijn voor beheer en latere verbetering, maar is minder bepalend voor de selectie van reproduceerbare validatiescenario's binnen deze bachelorproef.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption[Vertaling van contextobservaties naar prioritaire risicothema's]{Vertaling van contextobservaties naar prioritaire risicothema's.}
+    \label{tab:prioritaire-risicothemas}
+    {\setlength{\tabcolsep}{4pt}
+        \begin{tabular}{p{0.18\textwidth}p{0.30\textwidth}p{0.13\textwidth}p{0.25\textwidth}}
+            \hline
+            \textbf{Risicothema} & \textbf{Contextobservatie} & \textbf{Prioriteit} & \textbf{Validatiefocus} \\
+            \hline
+            Authenticatie en accountbeheer &
+            Eén gedeeld adminaccount, volledige rechten, geen persoonlijke accounts, geen multifactorauthenticatie en een wachtwoord dat sterk verbonden is aan de bedrijfscontext. &
+            Hoog &
+            Nagaan of de authenticatie-opzet een realistisch risico vormt voor ongeautoriseerde consultatie- of beheerfunctionaliteit. \\
+            \hline
+            Netwerksegmentatie en laterale bereikbaarheid &
+            De NVR bevindt zich op \texttt{10.0.0.60}; de camera's bevinden zich in de \texttt{192.168.0.x}-range. De router/default gateway op \texttt{10.0.0.150} en de waargenomen component \texttt{192.168.0.212} wijzen op een gerouteerd of downstream pad, maar de mate van afscherming blijft onduidelijk. &
+            Hoog &
+            Nagaan welke zichtbaarheid, routering en bereikbaarheid mogelijk blijven tussen beheersegment, NVR, tussenliggende componenten en cameradomein. \\
+            \hline
+            Actieve beheer- en streamingdiensten &
+            Er zijn aanwijzingen voor gebruik van webinterfaces, ONVIF, RTSP of NVR-gerelateerde poorten. De effectieve blootstelling en afscherming per component is nog niet volledig gevalideerd. &
+            Hoog &
+            Identificeren welke beheer- of streamingdiensten bereikbaar zijn en of zij voldoende zijn afgeschermd. \\
+            \hline
+            Remote access en externe publicatie &
+            De installatiefiche bevat historische verwijzingen naar DynDNS, port forwarding, lokale toegang via poort \texttt{8888} en VPN-gerelateerde toegang. Actuele externe bereikbaarheid moet voorzichtig worden gevalideerd. &
+            Hoog &
+            Nagaan of remote-accesspaden of NVR-gerelateerde beheerpaden bestaan en hoe sterk deze zijn afgeschermd. \\
+            \hline
+            Logging en detecteerbaarheid &
+            Logging is aanwezig, maar de actieve opvolging, alerting, volledigheid en bruikbaarheid voor reconstructie zijn beperkt of onduidelijk. &
+            Middelmatig tot hoog &
+            Evalueren of beheer- en toegangsacties zichtbaar worden in logs en of deze logging bruikbaar is voor detectie en reconstructie. \\
+            \hline
+        \end{tabular}
+    }
+\end{table}
+
+\subsection{\IfLanguageName{dutch}{Hoge prioriteit}{High priority}}%
+\label{subsec:risico-hoog}
+
+Tot de hoge prioriteit behoren risico's die zowel een duidelijke impact als een hoge contextuele waarschijnlijkheid hebben. Het gebruik van één gedeeld adminaccount met brede rechten is hiervan het duidelijkste voorbeeld. Wanneer meerdere gebruikers dezelfde hooggeprivilegieerde identiteit gebruiken, ontstaat niet alleen een verhoogd risico op misbruik, maar ook een probleem van accountability: achteraf is moeilijk vast te stellen wie welke actie uitvoerde.
+
+Ook netwerksegmentatie en laterale bereikbaarheid krijgen hoge prioriteit. De actuele vaststellingen tonen niet langer een eenvoudig volledig vlak netwerk, maar wel een complexere situatie met een beheer-/wifi-segment, een NVR op \texttt{10.0.0.60}, een router/default gateway op \texttt{10.0.0.150}, een waargenomen component op \texttt{192.168.0.212} en camera-adressen in de \texttt{192.168.0.x}-range. Deze nuance verlaagt het risico op rechtstreekse bereikbaarheid van elke camera vanuit elk intern toestel, maar neemt het risico niet weg. De centrale vraag verschuift daardoor naar de afscherming van de beheerpaden, de routering tussen segmenten en de mate waarin laterale beweging of interne verkenning beperkt wordt.
+
+Een derde hoogprioritair thema is de blootstelling van beheer- en streamingdiensten. IP-camerainfrastructuren steunen op beheerinterfaces en protocollen zoals HTTP(S), RTSP en ONVIF. Wanneer dergelijke diensten intern bereikbaar zijn zonder voldoende afscherming, verhogen zij het aanvalsoppervlak. Dit is vooral relevant omdat de omgeving heterogeen en legacy-georiënteerd is, waardoor configuratieverschillen, verouderde firmware en onduidelijke standaardinstellingen extra aandacht vragen.
+
+Ten slotte krijgt remote access hoge prioriteit. De historische verwijzingen naar DynDNS, port forwarding, VPN en poort \texttt{8888} betekenen niet automatisch dat de NVR op het moment van onderzoek rechtstreeks vanaf het internet bereikbaar is. Toch rechtvaardigen zij een gerichte validatie, omdat remote-accesspaden vaak een disproportioneel groot risico vormen wanneer zij onvoldoende afgeschermd of onvoldoende gedocumenteerd zijn.
+
+
+
+\subsection{\IfLanguageName{dutch}{Middelmatige prioriteit}{Medium priority}}%
+\label{subsec:risico-middel}
+
+Tot de middelmatige prioriteit behoren risico's die de impact van andere risico's kunnen versterken, maar die minder vaak het primaire startpunt vormen van een aanvalsscenario. Logging en monitoring zijn hiervan een belangrijk voorbeeld. Wanneer logging beperkt is of zelden actief wordt opgevolgd, wordt misbruik minder snel ontdekt en wordt reconstructie achteraf moeilijker. Dit verhoogt de schade bij een incident, maar vormt op zichzelf geen toegangspad. Daarom wordt logging niet als afzonderlijk exploitatiepad behandeld, maar wel als essentieel onderdeel van de validatie en latere mitigaties.
+
+Ook onvolledige documentatie, beperkte configuratieback-ups en onzekerheid over firmwarestatus vallen in deze categorie. Zij vergroten de beheercomplexiteit en maken herstel of incidentrespons moeilijker, maar zijn in deze bachelorproef vooral relevant als contextfactoren. Ze worden daarom meegenomen in de interpretatie van de resultaten en in het mitigatieontwerp, maar niet allemaal als afzonderlijke technische hypothese gevalideerd.
+
+
+
+\subsection{\IfLanguageName{dutch}{Lagere prioriteit binnen deze validatiefase}{Lower priority within this validation phase}}%
+\label{subsec:risico-laag}
+
+Lagere prioriteit betekent in dit hoofdstuk niet dat een aandachtspunt onbelangrijk is. Het betekent enkel dat het aandachtspunt minder geschikt is als primair validatiedoel binnen de scope van sprint 3. De exacte visuele koppeling van elke camera aan de plattegrond, de volledige lijst van MAC-adressen of de detailfirmware van elk individueel toestel zijn bijvoorbeeld nuttig voor assetbeheer, maar minder rechtstreeks nodig om de geselecteerde risico's rond authenticatie, netwerktoegang, protocolblootstelling, remote access en logging te onderzoeken.
+
+Deze afbakening voorkomt dat de validatiefase verzandt in inventarisdetails en bewaakt de focus op de onderzoeksvraag. De lagere prioriteit van bepaalde inventarisvelden sluit bovendien niet uit dat zij later in het verbeterplan of in de bijlagen worden opgenomen.
+
+
+
+\section{\IfLanguageName{dutch}{Hypothesen voor gecontroleerde validatie}{Hypotheses for controlled validation}}%
+\label{sec:validatie-hypothesen}
+
+Op basis van de prioritering worden vijf hypothesen geformuleerd. Elke hypothese koppelt een concrete risicoconditie aan een verwachte beveiligingsimpact. De hypothesen vormen geen vooraf bewezen conclusies, maar toetsbare uitgangspunten voor Hoofdstuk~\ref{ch:validatie}.
+
+\begin{description}
+    \item[H1 -- Authenticatie en accountbeheer.]
+    Indien zwakke of onvoldoende unieke credentials gebruikt worden op de NVR, de beheerhost of individuele cameracomponenten, dan kan ongeautoriseerde toegang tot beheer- of consultatiefuncties mogelijk worden. Deze hypothese volgt uit de vaststelling dat binnen de beheercontext één gedeeld adminaccount gebruikt wordt, dat functiescheiding ontbreekt en dat het wachtwoordbeleid onvoldoende sterk is.
+    
+    \item[H2 -- Netwerksegmentatie en laterale bereikbaarheid.]
+    Indien camera's, recorder en beheercomponenten zich binnen een brede of onvoldoende afgeschermde netwerkzone bevinden, of indien routering tussen gebruikers-, beheer- en cameranetwerken te weinig beperkt is, dan verhoogt dit het risico op laterale beweging en interne verkenning. Deze hypothese wordt genuanceerd geformuleerd: de omgeving lijkt niet volledig vlak, maar de afscherming tussen de NVR, de router/default gateway, de waargenomen downstream componenten en het cameradomein is nog onvoldoende transparant.
+    
+    \item[H3 -- Actieve beheer- en streamingdiensten.]
+    Indien beheer- of streamingdiensten zoals HTTP(S), RTSP of ONVIF actief zijn zonder voldoende afscherming, dan vergroten zij het interne aanvalsoppervlak en de kans op misbruik van beheer- of streamfunctionaliteit. Deze hypothese steunt op de vaststelling dat dergelijke protocollen of NVR-gerelateerde poorten relevant zijn binnen de onderzochte infrastructuur, terwijl de effectieve bereikbaarheid per component nog verder gevalideerd moet worden.
+    
+    \item[H4 -- Externe publicatie en afscherming van remote access.]
+    Indien externe toegang tot de NVR of tot netwerkcomponenten die toegang tot de camerazone ontsluiten aanwezig is zonder sterke afscherming, dan verhoogt dit het risico op misbruik van externe beheer- of raadpleegfunctionaliteit. Deze hypothese volgt uit historische en operationele verwijzingen naar DynDNS, port forwarding, VPN en NVR-toegang via poort \texttt{8888}. De hypothese wordt voorzichtig geïnterpreteerd: zij impliceert niet dat individuele camera's rechtstreeks vanaf het internet bereikbaar zijn.
+    
+    \item[H5 -- Logging en detecteerbaarheid.]
+    Indien logging beperkt is of niet actief wordt opgevolgd, dan worden misbruik, foutieve configuratiewijzigingen en verdachte activiteiten onvoldoende detecteerbaar. Deze hypothese is gebaseerd op de vaststelling dat logging wel aanwezig is, maar dat de volledigheid, opvolging, alerting en bruikbaarheid voor reconstructie nog moeten worden geëvalueerd.
+\end{description}
+
+Tabel~\ref{tab:hypothesen-validatie} vat de hypothesen samen en koppelt ze aan hun primaire risicothema en validatievorm.
+
+\begin{table}[htbp]
+    \centering
+    \small
+    \caption[Hypothesen en validatievormen]{Hypothesen en beoogde validatievormen.}
+    \label{tab:hypothesen-validatie}
+    {\setlength{\tabcolsep}{4pt}
+        \begin{tabular}{p{0.08\textwidth}p{0.22\textwidth}p{0.36\textwidth}p{0.22\textwidth}}
+            \hline
+            \textbf{Hyp.} & \textbf{Risicothema} & \textbf{Kern van de toetsing} & \textbf{Validatievorm} \\
+            \hline
+            H1 & Authenticatie en accountbeheer & Nagaan of de bestaande account- en wachtwoordpraktijk leidt tot verhoogd risico op ongeautoriseerde toegang. & Beperkte authenticatiecontrole, configuratie-observatie en accountanalyse. \\
+            \hline
+            H2 & Netwerksegmentatie & Nagaan welke bereikbaarheid en zichtbaarheid bestaat tussen beheersegment, router, NVR en cameradomein. & Traceroute, connectiviteitstesten en passieve netwerkobservatie. \\
+            \hline
+            H3 & Beheer- en streamingdiensten & Nagaan welke web-, beheer- of streamingdiensten actief en bereikbaar zijn. & Poortcontrole, browsertests en niet-invasieve serviceobservatie. \\
+            \hline
+            H4 & Remote access & Nagaan of remote-accesspaden of NVR-gerelateerde beheerpaden bestaan en voldoende afgeschermd zijn. & DNS- en connectiviteitscontrole, configuratie-observatie en afgeschermde validatie. \\
+            \hline
+            H5 & Logging en detectie & Nagaan welke acties zichtbaar worden in logs en of opvolging of alerting aanwezig is. & Loggingcontrole, controlegeschiedenis en interviewobservaties. \\
+            \hline
+        \end{tabular}
+    }
+\end{table}
+
+\section{\IfLanguageName{dutch}{Scope en randvoorwaarden voor de validatie}{Scope and constraints for validation}}%
+\label{sec:scope-randvoorwaarden}
+
+De scope van de validatie wordt beperkt tot risico's die rechtstreeks verband houden met de onderzoeksvraag en die veilig onderzocht kunnen worden. Binnen scope vallen authenticatie en accountbeheer, netwerksegmentatie en laterale bereikbaarheid, actieve beheer- en streamingdiensten, remote access rond de NVR of tussenliggende beheercomponenten, en logging of detecteerbaarheid. Deze focus sluit aan bij de onderdelen die de kans op misbruik en laterale netwerktoegang het sterkst beïnvloeden.
+
+Buiten scope vallen destructieve tests, productieverstorende handelingen, onbeperkte brute-force-aanvallen en rechtstreekse exploitatiepogingen op de productieomgeving. Ook de rechtstreekse internetblootstelling van individuele camera's wordt niet als primair testdoel behandeld, omdat de contextanalyse geen aanwijzing gaf dat de individuele camera's rechtstreeks als publiek internet-exposed systemen moeten worden beschouwd. De focus ligt daarom op de NVR, de router/default gateway, de tussenliggende beheercomponenten, de interne beheerpaden en de mate waarin deze toegangspaden zijn afgeschermd.
+
+Daarnaast vallen zuiver inventariserende elementen slechts beperkt binnen de validatiefase. De fysieke plaatsing van elke camera, de volledige MAC-adressenlijst of een volledig firmware-overzicht per individueel toestel zijn relevant voor beheer en documentatie, maar niet noodzakelijk voor elk validatiescenario. Zij worden daarom enkel meegenomen wanneer zij helpen om een risico of mitigatiemaatregel te onderbouwen.
+
+\subsection{\IfLanguageName{dutch}{Acceptatiecriteria}{Acceptance criteria}}%
+\label{subsec:acceptatiecriteria}
+
+Voor de interpretatie van de validatieresultaten worden vier acceptatiecriteria gebruikt. Een hypothese wordt als bevestigd beschouwd wanneer de onderliggende risicoconditie aantoonbaar aanwezig is en de verwachte beveiligingsimpact technisch of operationeel wordt ondersteund. Een hypothese wordt als gedeeltelijk bevestigd beschouwd wanneer de context sterk op het risico wijst, maar bijkomende technische validatie nodig blijft om de effectieve impact, bereikbaarheid of exploiteerbaarheid volledig aan te tonen. Een hypothese wordt als verworpen beschouwd wanneer een aanwezige configuratie of beveiligingsmaatregel het risico aantoonbaar beperkt. Een hypothese wordt niet verder meegenomen wanneer zij niet veilig, ethisch of reproduceerbaar onderzocht kan worden binnen de afgesproken onderzoeksopzet.
+
+Deze criteria zorgen ervoor dat de validatie in Hoofdstuk~\ref{ch:validatie} niet binair hoeft te zijn. In een reële KMO-omgeving zijn bevindingen vaak genuanceerd: een risico kan bijvoorbeeld historisch aanwezig zijn, intern deels bevestigd worden, maar niet aantoonbaar extern exploiteerbaar zijn op het moment van testen. Door ook gedeeltelijke bevestiging expliciet toe te laten, blijft de beoordeling eerlijk en traceerbaar.
+
+Samenvattend vertaalt dit hoofdstuk de contextanalyse naar vijf prioritaire hypothesen. De belangrijkste focus ligt op zwakke authenticatie, onvoldoende transparante netwerkafscherming, blootstelling van beheer- en streamingdiensten, remote-accesspaden en beperkte detecteerbaarheid. Hoofdstuk~\ref{ch:validatie} toetst deze hypothesen op een gecontroleerde en niet-verstorende manier aan de hand van technische observaties, connectiviteitstesten, logging en bewijsstukken.

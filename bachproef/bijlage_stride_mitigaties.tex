@@ -1,0 +1,304 @@
+% !TeX root = SmithEmielBP.tex
+%%=============================================================================
+%% Bijlage: STRIDE- en mitigatiematrix
+%%=============================================================================
+
+\chapter{\IfLanguageName{dutch}{Volledige STRIDE- en mitigatiematrix}{Full STRIDE and mitigation matrix}}%
+\label{app:stride-mitigaties}
+
+Deze bijlage bevat de volledige STRIDE-analyse en mitigatiematrix die hoort bij Hoofdstuk~\ref{ch:threatmodel}. In de hoofdtekst worden enkel de belangrijkste dreigingen en maatregelen samengevat. Deze bijlage documenteert de volledige vertaling van de gevalideerde bevindingen naar dreigingscategorieën, detectiepunten en concrete verbetermaatregelen.
+
+De analyse vertrekt vanuit de resultaten van Hoofdstuk~\ref{ch:validatie}. Daarbij worden de vastgestelde risico's niet als absolute kwetsbaarheden voorgesteld, maar als contextueel onderbouwde dreigingen. De omgeving bevat namelijk wel enige scheiding tussen beheersegment en cameradomein, maar de afscherming van beheerpaden, toegangscontrole, remote-accessconfiguratie en logopvolging blijft onvoldoende aantoonbaar uitgewerkt.
+
+\section{\IfLanguageName{dutch}{Volledige STRIDE-analyse}{Full STRIDE analysis}}%
+\label{app:volledige-stride-analyse}
+
+De STRIDE-analyse groepeert de dreigingen volgens zes categorieën: Spoofing, Tampering, Repudiation, Information Disclosure, Denial of Service en Elevation of Privilege. De tabellen hieronder tonen per component of datastroom welke dreiging relevant is, waarop deze dreiging in de validatie gebaseerd is en welk detectiepunt eventueel kan helpen om misbruik of verdachte activiteit op te merken.
+
+\subsection{\IfLanguageName{dutch}{Identiteit en toegangsbeheer}{Identity and access management}}%
+\label{app:stride-identiteit}
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \caption[STRIDE-analyse voor identiteit en toegangsbeheer]{STRIDE-analyse voor de Windows-beheerhost en TruVision Navigator 6.0.}
+    \label{tab:app-stride-identiteit}
+    \begin{tabularx}{\textwidth}{p{0.18\textwidth}p{0.12\textwidth}X X}
+        \hline
+        \textbf{Component / datastroom} & \textbf{STRIDE} & \textbf{Concrete dreiging} & \textbf{Onderbouwing en detectiepunt} \\
+        \hline
+        Windows-beheerhost en TruVision Navigator 6.0 &
+        Spoofing &
+        Een medewerker of derde kan zich voordoen als legitieme beheerder door gebruik van het gedeelde adminaccount en hetzelfde eenvoudige wachtwoord. &
+        De validatie toont dat op de beheerhost en in TruVision gewerkt wordt met één gedeeld adminaccount. Detectie is enkel beperkt mogelijk via loginhistoriek in de applicatie en Windows-aanmeldingen. \\
+        \hline
+        Windows-beheerhost en TruVision Navigator 6.0 &
+        Repudiation &
+        Acties zijn moeilijk eenduidig toe te wijzen aan één persoon omdat meerdere gebruikers onder hetzelfde adminprofiel werken. &
+        H1 benoemt expliciet het ontbreken van persoonlijke accounts en individuele accountability. Mogelijke detectiepunten zijn de controlehistoriek en Windows-logs, maar zonder user-level differentiatie blijft toewijzing beperkt. \\
+        \hline
+        Windows-beheerhost en TruVision Navigator 6.0 &
+        Elevation of Privilege &
+        Wie de gedeelde admincredentials kent, krijgt meteen brede beheerrechten in plaats van beperkte consultatierechten. &
+        Het gedeelde adminaccount heeft brede of volledige beheertoegang. Detectie is mogelijk via beheeracties in VMS-/NVR-logs en configuratiewijzigingen, op voorwaarde dat deze actief worden opgevolgd. \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{\IfLanguageName{dutch}{Beheerinterfaces en tussenliggende componenten}{Management interfaces and intermediary components}}%
+\label{app:stride-beheerinterfaces}
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \caption[STRIDE-analyse voor beheerinterfaces en tussencomponenten]{STRIDE-analyse voor beheerinterfaces en tussenliggende netwerkcomponenten.}
+    \label{tab:app-stride-beheerinterfaces}
+    \begin{tabularx}{\textwidth}{p{0.20\textwidth}p{0.12\textwidth}X X}
+        \hline
+        \textbf{Component / datastroom} & \textbf{STRIDE} & \textbf{Concrete dreiging} & \textbf{Onderbouwing en detectiepunt} \\
+        \hline
+        Beheersegment naar router \texttt{10.0.0.150} &
+        Information Disclosure &
+        Metadata, loginflow en sessiegegevens kunnen intern zichtbaar zijn door gebruik van HTTP zonder volwaardige transportencryptie. &
+        H3 en H4 tonen dat \texttt{10.0.0.150} bereikbaar is op poorten 80 en 443 en dat beheercommunicatie via HTTP zichtbaar was. Detectie kan via packet capture of webserverlogs. \\
+        \hline
+        Beheersegment naar router \texttt{10.0.0.150} &
+        Tampering &
+        Een actor met toegang tot het beheersegment kan proberen configuraties van de router of beheercomponent te wijzigen. &
+        De beheerinterface is operationeel bereikbaar vanuit het beheer-/wifi-segment. Mogelijke detectiepunten zijn configuratielogs en admin-loginhistoriek. \\
+        \hline
+        Beheersegment naar \texttt{192.168.0.212} &
+        Spoofing &
+        Een bijkomende beheercomponent in de toegangsroute kan misbruikt worden als legitiem transit- of beheerpunt. &
+        \texttt{192.168.0.212} bleek bereikbaar op poorten 80 en 443 en lijkt een routed tussenschakel of beheercomponent. Detectie kan via device-loginhistoriek en packet capture. \\
+        \hline
+        Beheersegment naar \texttt{192.168.0.212} &
+        Tampering &
+        Een actor kan via deze tussencomponent ongewenste wijzigingen uitvoeren op de beheerroute richting cameradomein. &
+        De component is bereikbaar en maakt deel uit van de toegangsroute naar het cameradomein. Mogelijke detectiepunten zijn configuratielogs, netwerkgedrag en wijzigingshistoriek. \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{\IfLanguageName{dutch}{NVR, cameradomein en segmentatie}{NVR, camera domain and segmentation}}%
+\label{app:stride-nvr-segmentatie}
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \caption[STRIDE-analyse voor NVR en segmentatie]{STRIDE-analyse voor de NVR, camerazone en netwerksegmentatie.}
+    \label{tab:app-stride-nvr-segmentatie}
+    \begin{tabularx}{\textwidth}{p{0.20\textwidth}p{0.12\textwidth}X X}
+        \hline
+        \textbf{Component / datastroom} & \textbf{STRIDE} & \textbf{Concrete dreiging} & \textbf{Onderbouwing en detectiepunt} \\
+        \hline
+        Beheersegment naar NVR \texttt{10.0.0.60} &
+        Information Disclosure &
+        NVR-diensten blijven zichtbaar en aanspreekbaar via specifieke poorten, wat informatie over beheer- of applicatiefuncties kan blootgeven. &
+        Poorten 8000 en 8888 waren bereikbaar vanuit het onderzochte segment, terwijl 80, 443 en 554 niet succesvol bereikbaar waren. Detectie kan via verbindinglogs, portscanresultaten en NVR-logs. \\
+        \hline
+        Beheersegment naar NVR \texttt{10.0.0.60} &
+        Elevation of Privilege &
+        Toegang tot recorderdiensten via beheerpoorten kan bij zwakke authenticatie leiden tot te ruime rechten op de NVR. &
+        H1 toont zwakke of gedeelde authenticatie; H3 toont dat NVR-gerelateerde poorten 8000 en 8888 intern bereikbaar zijn. Detectie kan via loginlogs, configuratiewijzigingen en gebruikershistoriek. \\
+        \hline
+        Gebruikers-/wifi-segment naar cameradomein &
+        Information Disclosure &
+        Onvoldoende fijnmazige segmentatie kan interne zichtbaarheid van beheerpaden of cameragerelateerde informatie toelaten. &
+        Er is wel laag-3-scheiding, maar geen overtuigend bewezen sterke beveiligende segmentatie. Beheercomponenten blijven zichtbaar. Detectie kan via traceroutes, packet captures en discoveryverkeer. \\
+        \hline
+        Gebruikers-/wifi-segment naar cameradomein &
+        Elevation of Privilege &
+        Een actor op het beheersegment kan via tussenliggende componenten verder bewegen richting NVR of cameradomein. &
+        H2 nuanceert dat de omgeving niet vlak is, maar ook niet aantoonbaar fijnmazig afgeschermd. Detectie kan via router-/firewalllogs, ACL-hits en traceroutes. \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{\IfLanguageName{dutch}{Remote access en logging}{Remote access and logging}}%
+\label{app:stride-remote-logging}
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \caption[STRIDE-analyse voor remote access en logging]{STRIDE-analyse voor remote access, logging en detecteerbaarheid.}
+    \label{tab:app-stride-remote-logging}
+    \begin{tabularx}{\textwidth}{p{0.20\textwidth}p{0.12\textwidth}X X}
+        \hline
+        \textbf{Component / datastroom} & \textbf{STRIDE} & \textbf{Concrete dreiging} & \textbf{Onderbouwing en detectiepunt} \\
+        \hline
+        Remote-accessketen &
+        Spoofing &
+        Historisch voorziene remote-accesspaden kunnen misbruikt worden voor ongewenste beheer- of raadpleegtoegang wanneer zij nog actief zijn of onvoldoende afgeschermd blijven. &
+        De installatiefiche vermeldt een DynDNS-hostname en poort 8888. De hostname resolveert nog naar een publiek IP-adres, maar TCP-tests naar poorten 8000 en 8888 waren niet succesvol. Detectie kan via DDNS-status, router-/VPN-logs, firewalllogs en NVR-loginhistoriek. \\
+        \hline
+        Remote-accessketen &
+        Information Disclosure &
+        Een bestaande DDNS-verwijzing en onvolledig gedocumenteerde remote-accessketen kunnen informatie prijsgeven over mogelijke externe toegangspunten. &
+        H4 toont dat remote access historisch voorzien was en dat de DDNS-hostname nog DNS-resolvable is. Tegelijk ontbreken rechtstreekse inzage in NAT-, port-forwarding-, VPN- en firewallregels. Detectie kan via DNS-controles, firewalllogs, routerconfiguratie en VPN-logs. \\
+        \hline
+        Logging en controlehistoriek &
+        Repudiation &
+        Misbruik kan moeilijk of onvolledig gereconstrueerd worden wanneer logging vooral lokaal, beperkt gecorreleerd en niet persoonsgebonden wordt opgevolgd. &
+        H5 toont dat logfilters, geslaagde loginlogs, logdetails en exportmogelijkheden aanwezig zijn. Uit interviewnotities blijkt echter dat logs zelden tot nooit actief worden bekeken. Detectie steunt op controlehistoriek, logexport en periodieke reviewverslagen. \\
+        \hline
+        Logging en controlehistoriek &
+        Denial of Service &
+        Verdachte activiteiten kunnen operationeel onopgemerkt blijven wanneer logging niet gekoppeld is aan automatische waarschuwingen of actieve monitoring. &
+        H5 geeft aan dat logs exporteerbaar zijn, maar dat geen e-mailwaarschuwingen bij verdachte acties worden verstuurd en dat de opvolging vooral reactief gebeurt. Detectiepunten zijn alertinstellingen, mail-/notificatie-instellingen en achteraf raadpleegbare logs. \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\clearpage
+
+\section{\IfLanguageName{dutch}{Volledige mitigatiematrix}{Full mitigation matrix}}%
+\label{app:volledige-mitigatiematrix}
+
+De mitigatiematrix vertaalt de STRIDE-dreigingen naar concrete maatregelen. Per maatregel wordt aangegeven welk referentiekader inhoudelijk aansluit, hoe haalbaar de maatregel is binnen een KMO-retailcontext en welke prioriteit eraan wordt toegekend.
+
+\subsection{\IfLanguageName{dutch}{Maatregelen met hoge prioriteit}{High-priority measures}}%
+\label{app:mitigaties-hoog}
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \caption[Mitigatiematrix met hoge prioriteit]{Mitigatiematrix voor maatregelen met hoge prioriteit.}
+    \label{tab:app-mitigaties-hoog}
+    \begin{tabularx}{\textwidth}{p{0.22\textwidth}X p{0.18\textwidth}p{0.11\textwidth}p{0.11\textwidth}}
+        \hline
+        \textbf{Dreiging / risico} & \textbf{Maatregel} & \textbf{Referentiekader} & \textbf{Haalbaarheid} & \textbf{Prioriteit} \\
+        \hline
+        Gedeeld adminaccount op Windows en TruVision &
+        Persoonlijke accounts invoeren voor elke gebruiker. &
+        NIST SP 800-53 -- toegangscontrole &
+        Hoog & Hoog \\
+        \hline
+        Zwak, contextgebonden wachtwoord &
+        Sterker wachtwoordbeleid invoeren, periodieke wijziging voorzien en gedeelde credentials vermijden. &
+        NIST SP 800-53 -- identificatie en authenticatie &
+        Hoog & Hoog \\
+        \hline
+        Geen functiescheiding tussen consultatie en beheer &
+        Aparte rollen voorzien, bijvoorbeeld viewer, operator en administrator. &
+        NIST SP 800-53 -- least privilege en role separation &
+        Middel & Hoog \\
+        \hline
+        HTTP-gebaseerde beheerinterface op \texttt{10.0.0.150} &
+        HTTPS afdwingen en HTTP uitschakelen waar mogelijk. &
+        NIST SP 800-53 -- system and communications protection &
+        Middel & Hoog \\
+        \hline
+        Beheerinterfaces bereikbaar vanuit breed beheer-/wifi-segment &
+        Toegang tot beheerinterfaces beperken tot een aparte adminzone of specifieke beheerhosts. &
+        NIST SP 800-53 -- network access control en segmentation &
+        Middel & Hoog \\
+        \hline
+        Tussenliggende beheercomponenten zichtbaar en bereikbaar &
+        Beheerpaden segmenteren en enkel noodzakelijke toegang toelaten. &
+        NIST SP 800-53 -- boundary protection &
+        Middel & Hoog \\
+        \hline
+        NVR-poorten 8000 en 8888 bereikbaar vanuit intern segment &
+        Enkel noodzakelijke poorten openlaten en filteren op bron-IP of beheernetwerk. &
+        NIST SP 800-53 -- least functionality en boundary protection &
+        Middel & Hoog \\
+        \hline
+        Segmentatie aanwezig maar niet overtuigend beveiligend &
+        Fijnmazige VLAN-, ACL- of firewallregels invoeren tussen gebruikersnetwerk, beheerpad en camerazone. &
+        NIST SP 800-53 -- network segmentation &
+        Middel & Hoog \\
+        \hline
+        Historisch voorziene remote access via DynDNS, maar actuele externe poortbereikbaarheid niet bevestigd &
+        Remote-accessconfiguratie formeel controleren met installateur of beheerder; ongebruikte DDNS-records en port-forwarding verwijderen; noodzakelijke externe toegang beperken tot VPN-only. &
+        NIST SP 800-53 -- boundary protection en remote access; ENISA-richtlijnen &
+        Middel & Hoog \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\subsection{\IfLanguageName{dutch}{Maatregelen met middelmatige prioriteit}{Medium-priority measures}}%
+\label{app:mitigaties-middel}
+
+\begin{table}[H]
+    \centering
+    \scriptsize
+    \caption[Mitigatiematrix met middelmatige prioriteit]{Mitigatiematrix voor maatregelen met middelmatige prioriteit.}
+    \label{tab:app-mitigaties-middel}
+    \begin{tabularx}{\textwidth}{p{0.22\textwidth}X p{0.18\textwidth}p{0.11\textwidth}p{0.11\textwidth}}
+        \hline
+        \textbf{Dreiging / risico} & \textbf{Maatregel} & \textbf{Referentiekader} & \textbf{Haalbaarheid} & \textbf{Prioriteit} \\
+        \hline
+        Logs beschikbaar en exporteerbaar, maar zelden actief gecontroleerd &
+        Periodieke logreviewprocedure invoeren met vaste eigenaar, frequentie en eenvoudige checklist voor login-, export- en configuratie-events. &
+        NIST SP 800-53 -- audit and accountability &
+        Hoog & Middel \\
+        \hline
+        Geen automatische e-mailwaarschuwingen of actieve alerting bij verdachte acties &
+        Alerts of minimale monitoring voorzien voor mislukte logins, configuratiewijzigingen, exportacties en beheerlogins buiten normale momenten. &
+        NIST SP 800-53 -- monitoring en incident detection &
+        Middel & Middel \\
+        \hline
+        Beperkte device-gerichte basiscapaciteiten &
+        Minimale beveiligingscapaciteiten per device evalueren: identificeerbaarheid, configuratiebeheer, logmogelijkheden en updatebeleid. &
+        NISTIR 8259A &
+        Laag tot middel & Middel \\
+        \hline
+        Onvoldoende zicht op actuele NAT-, port-forwarding-, VPN- en firewallregels &
+        Netwerk- en remote-accessdocumentatie actualiseren: verantwoordelijke, toegelaten poorten, gebruikte toegangsmethode en wijzigingshistoriek vastleggen. &
+        NIST SP 800-53 -- configuration management en boundary protection &
+        Middel & Middel \\
+        \hline
+    \end{tabularx}
+\end{table}
+
+\clearpage
+
+\section{\IfLanguageName{dutch}{Gefaseerde prioritering}{Phased prioritisation}}%
+\label{app:gefaseerde-prioritering}
+
+Om de aanbevelingen praktisch toepasbaar te maken binnen de context van De Rore, worden de maatregelen hieronder gegroepeerd volgens uitvoeringshorizon. Deze indeling maakt onderscheid tussen snel uitvoerbare verbeteringen, maatregelen die verdere configuratie of afstemming vragen, en structurele verbeteringen die een bredere hertekening van beheer- en netwerkarchitectuur vereisen.
+
+\subsection{\IfLanguageName{dutch}{Quick wins}{Quick wins}}%
+\label{app:quick-wins}
+
+\begin{itemize}
+    \item persoonlijke accounts invoeren voor alle gebruikers die de beheerhost of TruVision Navigator gebruiken;
+    \item gedeelde credentials vermijden en het bestaande wachtwoord vervangen door een sterker, niet-contextgebonden wachtwoord;
+    \item beheerrechten beperken volgens rol: viewer, operator en administrator;
+    \item HTTP uitschakelen of HTTPS afdwingen waar technisch mogelijk;
+    \item beheerinterfaces beperken tot specifieke beheerhosts of een afgebakend beheernetwerk;
+    \item een eenvoudige periodieke logreviewprocedure vastleggen;
+    \item de actuele DynDNS-, NAT-, port-forwarding- en VPN-configuratie laten controleren.
+\end{itemize}
+
+\subsection{\IfLanguageName{dutch}{Middellange termijn}{Medium term}}%
+\label{app:middellange-termijn}
+
+\begin{itemize}
+    \item toegangsregels opstellen voor verkeer tussen gebruikersnetwerk, beheerpad, NVR en cameradomein;
+    \item enkel noodzakelijke NVR-poorten beschikbaar houden en bronrestricties toepassen;
+    \item configuratie- en remote-accessdocumentatie actualiseren;
+    \item logging exporteerbaar en periodiek controleerbaar maken met duidelijke verantwoordelijke;
+    \item basisalerting voorzien voor mislukte logins, configuratiewijzigingen, exportacties en beheerlogins buiten normale momenten;
+    \item firmware- en updatebeleid documenteren voor NVR, camera's en netwerkcomponenten.
+\end{itemize}
+
+\subsection{\IfLanguageName{dutch}{Structurele verbeteringen}{Structural improvements}}%
+\label{app:structurele-verbeteringen}
+
+\begin{itemize}
+    \item de scheiding tussen gebruikersnetwerk, beheernetwerk, NVR-zone en cameradomein afdwingen via VLAN's, ACL's of firewallregels;
+    \item remote access herwerken naar een VPN-only model, zonder rechtstreeks gepubliceerde beheerpoorten;
+    \item centrale logging of regelmatige logexport voorzien voor NVR, beheerapplicatie en relevante netwerkcomponenten;
+    \item monitoring en waarschuwingen structureel inrichten voor kritieke beheeracties;
+    \item lifecycle- en patchbeheer vastleggen, inclusief opvolging van end-of-life hardware en firmware;
+    \item periodiek opnieuw evalueren of de camerainfrastructuur nog voldoet aan de minimale beveiligingsverwachtingen voor IoT- en netwerkapparatuur.
+\end{itemize}
+
+\section{\IfLanguageName{dutch}{Samenvattende interpretatie}{Summary interpretation}}%
+\label{app:stride-samenvatting}
+
+De volledige STRIDE- en mitigatiematrix bevestigt dat de grootste risicoreductie niet voortkomt uit één geïsoleerde technische maatregel, maar uit een combinatie van toegangsbeheer, netwerkafscherming, controle van remote access en betere detectie. Binnen de onderzochte omgeving zijn vooral persoonlijke accounts, sterker wachtwoordbeleid, beperking van beheerinterfaces, controle van DynDNS en port-forwarding, en periodieke logreview haalbare verbeteringen op korte termijn.
+
+Structureel blijft vooral de afbakening tussen gebruikersnetwerk, NVR, beheercomponenten en cameradomein belangrijk. De omgeving is niet volledig vlak, maar de bestaande scheiding is onvoldoende transparant en onvoldoende aangetoond als beveiligingsmaatregel. Daarom is het nodig om trust boundaries expliciet te documenteren en technisch af te dwingen via segmentatie, toegangsregels en beheerprocedures.

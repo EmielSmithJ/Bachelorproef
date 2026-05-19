@@ -11,7 +11,7 @@
 % - If you write your thesis in English (remark: only possible after getting
 %   explicit approval!), remove the option "dutch," or replace with "english".
 
-\usepackage{lipsum} % For blind text, can be removed after adding actual content
+% \usepackage{lipsum} % verwijderd: geen dummytekst in finale draft
 
 %% Pictures to include in the text can be put in the graphics/ folder
 \graphicspath{{../graphics/}}
@@ -47,6 +47,14 @@
 }
 
 % Other packages not already included can be imported here
+%% Packages voor finale draft-tabellen en technische bijlagen
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{pdflscape}
+\usepackage{enumitem}
+\usepackage{float}
+
 
 %%---------- Document metadata -------------------------------------------------
 % TODO: Replace this with your own information
@@ -77,102 +85,102 @@
 
 %% Content starts here.
 \begin{document}
-
-%---------- Front matter -------------------------------------------------------
-
-\frontmatter
-
-\hypersetup{pageanchor=false} %% Disable page numbering references
-%% Render a Dutch outer title page if the main language is English
-\IfLanguageName{english}{%
-    %% If necessary, information can be changed here
-    \degreesought{Professionele Bachelor toegepaste informatica}%
-    \begin{otherlanguage}{dutch}%
-       \maketitle%
-    \end{otherlanguage}%
-}{}
-
-%% Generates title page content
-\maketitle
-\hypersetup{pageanchor=true}
-
-\input{voorwoord}
-\input{samenvatting}
-
-%---------- Inhoud, lijst figuren, ... -----------------------------------------
-
-\tableofcontents
-
-% In a list of figures, the complete caption will be included. To prevent this,
-% ALWAYS add a short description in the caption!
-%
-%  \caption[short description]{elaborate description}
-%
-% If you do, only the short description will be used in the list of figures
-
-\listoffigures
-
-% If you included tables and/or source code listings, uncomment the appropriate
-% lines.
-\listoftables
-
-\listoflistings
-
-% Als je een lijst van afkortingen of termen wil toevoegen, dan hoort die
-% hier thuis. Gebruik bijvoorbeeld de ``glossaries'' package.
-% https://www.overleaf.com/learn/latex/Glossaries
-
-%---------- Kern ---------------------------------------------------------------
-
-\mainmatter{}
-
-% De eerste hoofdstukken van een bachelorproef zijn meestal een inleiding op
-% het onderwerp, literatuurstudie en verantwoording methodologie.
-% Aarzel niet om een meer beschrijvende titel aan deze hoofdstukken te geven of
-% om bijvoorbeeld de inleiding en/of stand van zaken over meerdere hoofdstukken
-% te verspreiden!
-
-\input{inleiding}
-\input{standvanzaken}
-\input{methodologie}
-
-% Voeg hier je eigen hoofdstukken toe die de ``corpus'' van je bachelorproef
-% vormen. De structuur en titels hangen af van je eigen onderzoek. Je kan bv.
-% elke fase in je onderzoek in een apart hoofdstuk bespreken.
-
-%\input{...}
-%\input{...}
-%...
-
-\input{conclusie}
-
-%---------- Bijlagen -----------------------------------------------------------
-
-\appendix
-
-\chapter{Onderzoeksvoorstel}
-
-Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat vooraf werd beoordeeld door de promotor. Dat voorstel is opgenomen in deze bijlage.
-
-%% TODO: 
-%\section*{Samenvatting}
-
-% Kopieer en plak hier de samenvatting (abstract) van je onderzoeksvoorstel.
-
-% Verwijzing naar het bestand met de inhoud van het onderzoeksvoorstel
-\input{../voorstel/voorstel-inhoud}
-
-%%---------- Andere bijlagen --------------------------------------------------
-% TODO: Voeg hier eventuele andere bijlagen toe. Bv. als je deze BP voor de
-% tweede keer indient, een overzicht van de verbeteringen t.o.v. het origineel.
-%\input{...}
-
-%%---------- Backmatter, referentielijst ---------------------------------------
-
-\backmatter{}
-
-\setlength\bibitemsep{2pt} %% Add Some space between the bibliograpy entries
-\nocite{*}
-\printbibliography[heading=bibintoc]
-
+    
+    %---------- Front matter -------------------------------------------------------
+    
+    \frontmatter
+    
+    \hypersetup{pageanchor=false} %% Disable page numbering references
+    %% Render a Dutch outer title page if the main language is English
+    \IfLanguageName{english}{%
+        %% If necessary, information can be changed here
+        \degreesought{Professionele Bachelor toegepaste informatica}%
+        \begin{otherlanguage}{dutch}%
+            \maketitle%
+        \end{otherlanguage}%
+    }{}
+    
+    %% Generates title page content
+    \maketitle
+    \hypersetup{pageanchor=true}
+    
+    \input{voorwoord}
+    \input{samenvatting}
+    
+    %---------- Inhoud, lijst figuren, ... -----------------------------------------
+    
+    \tableofcontents
+    
+    % In a list of figures, the complete caption will be included. To prevent this,
+    % ALWAYS add a short description in the caption!
+    %
+    %  \caption[short description]{elaborate description}
+    %
+    % If you do, only the short description will be used in the list of figures
+    
+    \listoffigures
+    
+    % If you included tables and/or source code listings, uncomment the appropriate
+    % lines.
+    \listoftables
+    
+   
+    
+    % Als je een lijst van afkortingen of termen wil toevoegen, dan hoort die
+    % hier thuis. Gebruik bijvoorbeeld de ``glossaries'' package.
+    % https://www.overleaf.com/learn/latex/Glossaries
+    
+    %---------- Kern ---------------------------------------------------------------
+    
+    \mainmatter{}
+    
+    % De eerste hoofdstukken van een bachelorproef zijn meestal een inleiding op
+    % het onderwerp, literatuurstudie en verantwoording methodologie.
+    % Aarzel niet om een meer beschrijvende titel aan deze hoofdstukken te geven of
+    % om bijvoorbeeld de inleiding en/of stand van zaken over meerdere hoofdstukken
+    % te verspreiden!
+    
+    \input{inleiding}
+    \input{standvanzaken}
+    \input{methodologie}
+    
+    % Resultatenhoofdstukken finale draft
+    \input{contextanalyse}
+    \input{risicoanalyse}
+    \input{validatie}
+    \input{threatmodel_mitigaties}
+    
+    \input{conclusie}
+    
+    %---------- Bijlagen -----------------------------------------------------------
+    
+    \appendix
+    
+    \chapter{Onderzoeksvoorstel}
+    
+    Het onderwerp van deze bachelorproef is gebaseerd op een onderzoeksvoorstel dat vooraf werd beoordeeld door de promotor. Dat voorstel is opgenomen in deze bijlage.
+    
+    \IfFileExists{../voorstel/voorstel-inhoud.tex}{%
+        \input{../voorstel/voorstel-inhoud}%
+    }
+   
+        {%
+            \textit{Het onderzoeksvoorstel wordt later in deze bijlage ingevoegd.}%
+        }%
+    
+    
+    %%---------- Andere bijlagen --------------------------------------------------
+    
+    \input{bijlage_asset_inventory}
+    \input{bijlage_bewijsstukken}
+    \input{bijlage_stride_mitigaties}
+    
+    %%---------- Backmatter, referentielijst ---------------------------------------
+    
+    \backmatter{}
+    
+    \setlength\bibitemsep{2pt} %% Add Some space between the bibliograpy entries
+    \nocite{*}
+    \printbibliography[heading=bibintoc]
+    
 \end{document}

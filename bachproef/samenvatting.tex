@@ -1,43 +1,30 @@
+% !TeX root = SmithEmielBP.tex
 %%=============================================================================
 %% Samenvatting
 %%=============================================================================
 
-% TODO: De "abstract" of samenvatting is een kernachtige (~ 1 blz. voor een
-% thesis) synthese van het document.
-%
-% Een goede abstract biedt een kernachtig antwoord op volgende vragen:
-%
-% 1. Waarover gaat de bachelorproef?
-% 2. Waarom heb je er over geschreven?
-% 3. Hoe heb je het onderzoek uitgevoerd?
-% 4. Wat waren de resultaten? Wat blijkt uit je onderzoek?
-% 5. Wat betekenen je resultaten? Wat is de relevantie voor het werkveld?
-%
-% Daarom bestaat een abstract uit volgende componenten:
-%
-% - inleiding + kaderen thema
-% - probleemstelling
-% - (centrale) onderzoeksvraag
-% - onderzoeksdoelstelling
-% - methodologie
-% - resultaten (beperk tot de belangrijkste, relevant voor de onderzoeksvraag)
-% - conclusies, aanbevelingen, beperkingen
-%
-% LET OP! Een samenvatting is GEEN voorwoord!
+% De samenvatting is een kernachtige synthese van het document.
+% Ze bevat geen persoonlijke bedankingen; die horen thuis in het woord vooraf.
 
 %%---------- Nederlandse samenvatting -----------------------------------------
 %
-% TODO: Als je je bachelorproef in het Engels schrijft, moet je eerst een
-% Nederlandse samenvatting invoegen. Haal daarvoor onderstaande code uit
-% commentaar.
-% Wie zijn bachelorproef in het Nederlands schrijft, kan dit negeren, de inhoud
-% wordt niet in het document ingevoegd.
+% Als de bachelorproef in het Engels geschreven wordt, kan hier een Nederlandse
+% samenvatting ingevoegd worden. Omdat deze bachelorproef in het Nederlands
+% geschreven is, wordt deze blok niet in het document opgenomen.
 
 \IfLanguageName{english}{%
-\selectlanguage{dutch}
-\chapter*{Samenvatting}
-\lipsum[1-4]
-\selectlanguage{english}
+    \selectlanguage{dutch}
+    \chapter*{Samenvatting}
+    
+    Deze bachelorproef onderzoekt de beveiligingsrisico's van een heterogene IP-camerainfrastructuur in een retailomgeving. De casus situeert zich bij meubelzaak De Rore, waar IP-camera's, een centrale NVR, netwerkcomponenten en beheerapplicaties samen instaan voor camerabewaking en beeldopslag. Dergelijke systemen worden vaak beschouwd als ondersteunende infrastructuur, maar kunnen door zwakke configuratie, beperkte segmentatie of onvoldoende beheer ook een bijkomend aanvalsoppervlak vormen binnen het bedrijfsnetwerk.
+    
+    De centrale onderzoeksvraag luidt in welke mate de bestaande IP-camerainfrastructuur binnen De Rore veilig geconfigureerd en geïntegreerd is in het interne netwerk, en welke maatregelen nodig zijn om het risico op misbruik en laterale netwerktoegang te verlagen. Om deze vraag te beantwoorden werd het onderzoek opgebouwd in opeenvolgende fasen. Eerst werd de omgeving geïnventariseerd via een contextanalyse en asset inventory. Daarna werden de belangrijkste risico's geprioriteerd en vertaald naar vijf onderzoekshypothesen rond authenticatie, netwerksegmentatie, actieve diensten, remote access en logging. Deze hypothesen werden vervolgens gecontroleerd gevalideerd aan de hand van observaties, connectiviteitstesten, traceroutes, browsertests, passieve netwerkcaptatie en loggingcontrole. Tot slot werden de bevindingen gestructureerd via STRIDE en omgezet naar een praktisch mitigatieontwerp.
+    
+    Uit het onderzoek blijkt dat de camerainfrastructuur niet als volledig onbeheerd of volledig open kan worden beschouwd, maar ook niet als voldoende robuust beveiligd. De individuele camera's bleken vanuit het onderzochte segment niet rechtstreeks bereikbaar, wat wijst op een vorm van scheiding tussen het beheersegment en het cameradomein. Tegelijk blijven meerdere beheerpaden en netwerkcomponenten bereikbaar vanuit een intern of semibevoorrecht segment. Daarnaast werd vastgesteld dat gedeelde adminaccounts, een contextgebonden wachtwoord, beperkte functiescheiding, verouderd lifecyclebeheer en beperkte actieve logopvolging belangrijke aandachtspunten vormen. Voor de historisch vermelde DynDNS-toegang werd geen publieke TCP-bereikbaarheid aangetoond op de onderzochte poorten, maar de aanwezigheid van dergelijke remote-accesshistoriek blijft wel relevant voor de risicobeoordeling.
+    
+    De belangrijkste aanbevelingen richten zich daarom op pragmatische risicoreductie. Op korte termijn gaat het onder meer om het vervangen van gedeelde accounts door persoonlijke accounts, het versterken van wachtwoorden, het beperken van beheerinterfaces tot noodzakelijke hosts, het controleren van remote-accessinstellingen en het actiever opvolgen van logging. Op langere termijn zijn een duidelijker gesegmenteerde camerazone, firewallregels tussen beheersegment en cameradomein, een formeel patch- en configuratiebeheer en periodieke controle van logs en toegangspaden aangewezen. De meerwaarde van dit onderzoek ligt in de vertaling van algemene IoT- en camerabeveiligingsprincipes naar een concrete en haalbare aanpak voor een KMO- en retailcontext.
+    
+    \selectlanguage{english}
 }{}
 
 %%---------- Samenvatting -----------------------------------------------------
@@ -45,4 +32,10 @@
 
 \chapter*{\IfLanguageName{dutch}{Samenvatting}{Abstract}}
 
-\lipsum[1-4]
+Deze bachelorproef onderzoekt de beveiligingsrisico's van een heterogene IP-camerainfrastructuur in een retailomgeving. De casus situeert zich bij meubelzaak De Rore, waar IP-camera's, een centrale NVR, netwerkcomponenten en beheerapplicaties samen instaan voor camerabewaking en beeldopslag. Dergelijke systemen worden vaak beschouwd als ondersteunende infrastructuur, maar kunnen door zwakke configuratie, beperkte segmentatie of onvoldoende beheer ook een bijkomend aanvalsoppervlak vormen binnen het bedrijfsnetwerk.
+
+De centrale onderzoeksvraag luidt in welke mate de bestaande IP-camerainfrastructuur binnen De Rore veilig geconfigureerd en geïntegreerd is in het interne netwerk, en welke maatregelen nodig zijn om het risico op misbruik en laterale netwerktoegang te verlagen. Om deze vraag te beantwoorden werd het onderzoek opgebouwd in opeenvolgende fasen. Eerst werd de omgeving geïnventariseerd via een contextanalyse en asset inventory. Daarna werden de belangrijkste risico's geprioriteerd en vertaald naar vijf onderzoekshypothesen rond authenticatie, netwerksegmentatie, actieve diensten, remote access en logging. Deze hypothesen werden vervolgens gecontroleerd gevalideerd aan de hand van observaties, connectiviteitstesten, traceroutes, browsertests, passieve netwerkcaptatie en loggingcontrole. Tot slot werden de bevindingen gestructureerd via STRIDE en omgezet naar een praktisch mitigatieontwerp.
+
+Uit het onderzoek blijkt dat de camerainfrastructuur niet als volledig onbeheerd of volledig open kan worden beschouwd, maar ook niet als voldoende robuust beveiligd. De individuele camera's bleken vanuit het onderzochte segment niet rechtstreeks bereikbaar, wat wijst op een vorm van scheiding tussen het beheersegment en het cameradomein. Tegelijk blijven meerdere beheerpaden en netwerkcomponenten bereikbaar vanuit een intern of semibevoorrecht segment. Daarnaast werd vastgesteld dat gedeelde adminaccounts, een contextgebonden wachtwoord, beperkte functiescheiding, verouderd lifecyclebeheer en beperkte actieve logopvolging belangrijke aandachtspunten vormen. Voor de historisch vermelde DynDNS-toegang werd geen publieke TCP-bereikbaarheid aangetoond op de onderzochte poorten, maar de aanwezigheid van dergelijke remote-accesshistoriek blijft wel relevant voor de risicobeoordeling.
+
+De belangrijkste aanbevelingen richten zich daarom op pragmatische risicoreductie. Op korte termijn gaat het onder meer om het vervangen van gedeelde accounts door persoonlijke accounts, het versterken van wachtwoorden, het beperken van beheerinterfaces tot noodzakelijke hosts, het controleren van remote-accessinstellingen en het actiever opvolgen van logging. Op langere termijn zijn een duidelijker gesegmenteerde camerazone, firewallregels tussen beheersegment en cameradomein, een formeel patch- en configuratiebeheer en periodieke controle van logs en toegangspaden aangewezen. De meerwaarde van dit onderzoek ligt in de vertaling van algemene IoT- en camerabeveiligingsprincipes naar een concrete en haalbare aanpak voor een KMO- en retailcontext.

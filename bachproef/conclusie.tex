@@ -1,18 +1,66 @@
+% !TeX root = SmithEmielBP.tex
 %%=============================================================================
 %% Conclusie
 %%=============================================================================
 
-\chapter{Conclusie}%
+\chapter{\IfLanguageName{dutch}{Conclusie}{Conclusion}}%
 \label{ch:conclusie}
 
-% TODO: Trek een duidelijke conclusie, in de vorm van een antwoord op de
-% onderzoeksvra(a)g(en). Wat was jouw bijdrage aan het onderzoeksdomein en
-% hoe biedt dit meerwaarde aan het vakgebied/doelgroep? 
-% Reflecteer kritisch over het resultaat. In Engelse teksten wordt deze sectie
-% ``Discussion'' genoemd. Had je deze uitkomst verwacht? Zijn er zaken die nog
-% niet duidelijk zijn?
-% Heeft het onderzoek geleid tot nieuwe vragen die uitnodigen tot verder 
-%onderzoek?
+Deze bachelorproef onderzocht de beveiligingsrisico's van een heterogene IP-camerainfrastructuur in een concrete retailomgeving, namelijk meubelzaak De Rore. Het onderzoek vertrok vanuit de vraag in welke mate de bestaande camerainfrastructuur veilig geconfigureerd en geïntegreerd is in het interne netwerk, en welke concrete maatregelen nodig zijn om het risico op misbruik en laterale netwerktoegang te verlagen. Door de combinatie van een contextanalyse, risicoanalyse, gecontroleerde validatie en STRIDE-gebaseerd mitigatieontwerp kon de initiële probleemstelling worden vertaald naar een praktisch bruikbaar beveiligingsadvies.
 
-\lipsum[76-80]
+\section{\IfLanguageName{dutch}{Antwoord op de onderzoeksvraag}{Answer to the research question}}%
+\label{sec:conclusie-onderzoeksvraag}
 
+De centrale onderzoeksvraag luidde:
+
+\begin{quote}
+    In welke mate is de bestaande IP-camerainfrastructuur binnen meubelzaak De Rore veilig geconfigureerd en geïntegreerd in het interne netwerk, en welke concrete maatregelen zijn nodig om het risico op misbruik en laterale netwerktoegang te verlagen?
+\end{quote}
+
+Op basis van het uitgevoerde onderzoek kan worden geconcludeerd dat de camerainfrastructuur van De Rore functioneel inzetbaar is, maar vanuit beveiligingsperspectief slechts gedeeltelijk veilig geconfigureerd en geïntegreerd is. De infrastructuur is niet volledig onbeschermd en de oorspronkelijke aanname van één volledig vlak netwerk moest worden genuanceerd. De metingen tonen immers aan dat de NVR zich op \texttt{10.0.0.60} bevindt, dat \texttt{10.0.0.150} als router of default gateway fungeert en dat de individuele camera's zich in de \texttt{192.168.0.x}-range bevinden. Vanuit het onderzochte testsegment bleken individuele camera's niet rechtstreeks bereikbaar. Dat wijst erop dat er minstens een vorm van netwerkafbakening of gerouteerde scheiding aanwezig is.
+
+Tegelijk is deze scheiding onvoldoende om de omgeving als overtuigend beveiligd te beschouwen. Verschillende beheercomponenten en beheerpaden blijven intern bereikbaar, waaronder beheerinterfaces op \texttt{10.0.0.150} en \texttt{192.168.0.212} en NVR-gerelateerde poorten op \texttt{10.0.0.60}. Daarnaast steunt de toegangsbeveiliging sterk op gedeelde adminaccounts, een beperkt wachtwoordbeleid en het ontbreken van duidelijke functiescheiding. De logging is aanwezig en ondersteunt meerdere gebeurtenistypes, maar wordt zelden actief opgevolgd en is niet aantoonbaar gekoppeld aan waarschuwingen of centrale monitoring. De historische DynDNS-configuratie blijft bovendien een aandachtspunt, ook al werd publieke TCP-bereikbaarheid van de onderzochte poorten niet aangetoond.
+
+Het antwoord op de onderzoeksvraag is daarom genuanceerd: de bestaande IP-camerainfrastructuur is niet volledig open of onbeheerd, maar bevat meerdere configuratie- en integratierisico's die misbruik of ongewenste toegang kunnen vergemakkelijken. De grootste risicoreductie kan worden bereikt door toegangsbeheer te versterken, beheerinterfaces beter af te schermen, segmentatie explicieter af te dwingen, remote access formeel te controleren en logging systematisch op te volgen.
+
+\section{\IfLanguageName{dutch}{Antwoord op de deelvragen}{Answer to the subquestions}}%
+\label{sec:conclusie-deelvragen}
+
+De eerste deelvraag onderzocht welke beveiligingsrisico's en aanvalspaden relevant zijn voor IP-camera's die geïntegreerd zijn in een intern retailnetwerk. Uit de literatuurstudie en contextanalyse blijkt dat vooral zwakke authenticatie, onvoldoende netwerksegmentatie, bereikbare beheerinterfaces, onduidelijke remote-accesspaden, verouderd lifecyclebeheer en beperkte logging relevant zijn. Deze risico's zijn niet uniek voor De Rore, maar typisch voor veel KMO- en retailomgevingen waarin operationele continuïteit vaak voorrang krijgt op formeel beveiligingsbeheer.
+
+De tweede deelvraag richtte zich op kwetsbaarheden en misconfiguraties binnen de huidige cameraconfiguratie. De belangrijkste vaststellingen zijn het gebruik van gedeelde adminaccounts, beperkte functiescheiding, een contextgebonden wachtwoordbeleid en het ontbreken van multifactorauthenticatie. Daarnaast werden actieve beheerdiensten en NVR-poorten vastgesteld die vanuit een intern of semibevoorrecht segment bereikbaar waren. Voor individuele camera's werd geen rechtstreekse bereikbaarheid vanuit het onderzochte segment aangetoond, waardoor de bevindingen vooral betrekking hebben op de beheerhost, de NVR en tussenliggende netwerkcomponenten.
+
+De derde deelvraag onderzocht in welke mate de netwerkarchitectuur laterale beweging beperkt. De resultaten tonen dat de omgeving niet volledig vlak is. Er bestaat minstens een gerouteerd of downstream pad tussen het beheer-/wifi-segment en het cameradomein. Toch kon niet worden aangetoond dat deze segmentatie voldoende fijnmazig of beleidsmatig afgedwongen is. De bereikbaarheid van tussenliggende beheerinterfaces en NVR-poorten betekent dat een intern toestel nog steeds relevante informatie kan verzamelen en bepaalde beheerpaden kan benaderen. De bestaande architectuur beperkt dus een deel van de rechtstreekse toegang, maar vormt nog geen volwaardige beveiligingsbarrière.
+
+De vierde deelvraag vroeg welke pragmatische verbetermaatregelen haalbaar zijn binnen de winkelcontext en de grootste risicoreductie opleveren. De meest haalbare maatregelen zijn het invoeren van persoonlijke accounts, het vermijden van gedeelde credentials, het versterken van wachtwoordbeleid, het beperken van beheerinterfaces tot specifieke beheerhosts of een adminzone, het uitschakelen of afdwingen van veilige toegang tot HTTP/HTTPS-beheerinterfaces, het formeel controleren van DynDNS-, NAT-, VPN- en port-forwardingregels en het invoeren van periodieke logreview. Op langere termijn zijn fijnmazige VLAN- of firewallsegmentatie, lifecyclebeheer voor NVR en camera's en automatische waarschuwingen bij verdachte acties aangewezen.
+
+\section{\IfLanguageName{dutch}{Belangrijkste aanbevelingen}{Main recommendations}}%
+\label{sec:conclusie-aanbevelingen}
+
+De aanbevelingen uit Hoofdstuk~\ref{ch:threatmodel-mitigaties} kunnen worden samengevat in drie prioriteitsniveaus.
+
+Op korte termijn moet De Rore vooral inzetten op toegangsbeheer. Het gedeelde admingebruik vormt een belangrijk risico omdat acties moeilijk toewijsbaar zijn en omdat elke gebruiker met de gedeelde credentials meteen brede rechten krijgt. Persoonlijke accounts, rolgebaseerde rechten en een sterker wachtwoordbeleid zijn daarom de belangrijkste quick wins. Waar de gebruikte software of hardware dit ondersteunt, is multifactorauthenticatie wenselijk, minstens voor externe toegang of beheerfunctionaliteit.
+
+Daarnaast moeten de beheerinterfaces en NVR-diensten beperkt worden tot de hosts en gebruikers die ze werkelijk nodig hebben. HTTP-toegang moet waar mogelijk worden uitgeschakeld of doorgestuurd naar HTTPS, en beheerpoorten mogen niet bereikbaar zijn vanuit brede gebruikers- of gastsegmenten. Ook de remote-accessconfiguratie moet formeel worden nagekeken. Ongebruikte DynDNS-records, port-forwardingregels of oude toegangsmechanismen moeten worden verwijderd. Externe toegang tot de camerainfrastructuur hoort bij voorkeur uitsluitend via een gecontroleerde VPN-oplossing te verlopen.
+
+Op middellange termijn is een expliciete netwerksegmentatie nodig tussen gebruikersnetwerk, beheerzone, NVR en cameradomein. Deze segmentatie moet niet alleen logisch bestaan, maar ook technisch afdwingbaar zijn via VLAN's, ACL's of firewallregels. Alleen noodzakelijke communicatie, zoals camerastreams naar de NVR en beheercommunicatie vanaf geautoriseerde beheerhosts, mag worden toegelaten. Tot slot moet logging evolueren van een passieve controlegeschiedenis naar een bruikbaar detectiemechanisme. Een eenvoudige logreviewprocedure met vaste eigenaar, frequentie en aandachtspunten is voor een KMO-context realistischer dan een complex SIEM-systeem, maar levert toch een duidelijke maturiteitswinst op.
+
+\section{\IfLanguageName{dutch}{Beperkingen van het onderzoek}{Limitations of the research}}%
+\label{sec:conclusie-beperkingen}
+
+Dit onderzoek werd bewust afgebakend om de productieomgeving van De Rore niet te verstoren. Er werden geen destructieve tests, onbeperkte brute-force-aanvallen of belastende exploitpogingen uitgevoerd. Daardoor konden bepaalde risico's niet volledig technisch worden uitgebuit of tot hun maximale impact worden aangetoond. De validatie toont dus vooral aan welke risicocondities aanwezig zijn en welke paden bereikbaar of zichtbaar zijn, maar niet in alle gevallen wat een aanvaller met volledige exploitatiecapaciteit zou kunnen bereiken.
+
+Een tweede beperking is dat de exacte netwerkarchitectuur niet volledig kon worden gereconstrueerd. De metingen tonen een beheer-/wifi-segment, een NVR op \texttt{10.0.0.60}, een router/default gateway op \texttt{10.0.0.150}, een tussenliggende component op \texttt{192.168.0.212} en camera-adressen in de \texttt{192.168.0.x}-range. De precieze VLAN-configuratie, firewallregels en interne routeringslogica konden echter niet volledig uitgelezen of formeel bevestigd worden. Daarom werden de conclusies over segmentatie bewust voorzichtig geformuleerd.
+
+Een derde beperking is dat de studie zich richt op één concrete casusomgeving. De resultaten zijn sterk bruikbaar voor De Rore en relevant voor vergelijkbare KMO- en retailomgevingen, maar mogen niet zonder meer veralgemeend worden naar alle IP-camerainfrastructuren. Andere omgevingen kunnen andere merken, topologieën, cloudkoppelingen, firmwareversies of beheerprocessen gebruiken. De waarde van deze bachelorproef ligt daarom vooral in de methodische aanpak en de praktische vertaalslag naar maatregelen, eerder dan in een universele uitspraak over alle IP-camerasystemen.
+
+\section{\IfLanguageName{dutch}{Toekomstig onderzoek}{Future work}}%
+\label{sec:conclusie-toekomstig-onderzoek}
+
+Toekomstig onderzoek kan in de eerste plaats nagaan hoe de voorgestelde maatregelen in de praktijk geïmplementeerd worden en welke risicoreductie daarna meetbaar is. Een vervolgmeting na het invoeren van persoonlijke accounts, segmentatieregels, remote-accessbeperkingen en logreview zou toelaten om de maturiteitsverbetering objectiever te beoordelen.
+
+Daarnaast kan een diepgaandere netwerkanalyse worden uitgevoerd zodra volledige configuratietoegang tot switches, routers en firewallregels beschikbaar is. Daarmee kan de exacte segmentatie tussen beheersegment, NVR-zone en cameradomein formeel worden gevalideerd. Ook een gecontroleerde testopstelling met identieke of vergelijkbare TruVision-componenten kan nuttig zijn om firmwaregedrag, protocolblootstelling en updateprocedures verder te onderzoeken zonder risico voor de productieomgeving.
+
+Ten slotte kan verder onderzoek zich richten op de bredere toepasbaarheid van deze aanpak binnen andere KMO's. Veel kleine organisaties beschikken over vergelijkbare camera- of IoT-installaties, maar hebben beperkte tijd en middelen voor formeel beveiligingsbeheer. Een vereenvoudigd evaluatiekader op basis van asset inventory, beperkte connectiviteitstesten, STRIDE en een praktische mitigatiematrix kan daarom waardevol zijn als herbruikbare aanpak voor vergelijkbare retailomgevingen.
+
+Samenvattend toont deze bachelorproef aan dat IP-camerabeveiliging in een KMO-context niet enkel een kwestie is van individuele camerakwetsbaarheden. De grootste risico's ontstaan door de combinatie van beheerpraktijken, netwerkarchitectuur, toegangscontrole, remote access en detecteerbaarheid. Door deze elementen systematisch in kaart te brengen en te vertalen naar haalbare maatregelen, krijgt De Rore een concreet verbeterpad om de beveiliging van haar camerainfrastructuur stapsgewijs te verhogen.
